@@ -11,7 +11,8 @@ import matplotlib.pyplot as plt
 import datetime as datetime
 
 print("running ./KS_2samp_test_before_after_MHT_stratComorbid.py")
-output_file = './KS_2samp_test_before_after_MHT_stratComorbid.out'
+output_dir = '../analysis_output/'
+output_file = output_dir + 'KS_2samp_test_before_after_MHT_stratComorbid.out'
 fstream = open(output_file,'a')
 
 ## calculate before/after MAP's for all pts in MHT
@@ -250,7 +251,7 @@ for dz in data_BP_stratComorbid:
     plt.xlabel('MAP before')
     plt.ylabel('MAP after')
     plt.title('OUT OF CONTROL')
-    savestr = "plt_strat_" + dz + "_scatter_MAP_before_after_IC_OOC.png"
+    savestr = output_dir + "plt_strat_" + dz + "_scatter_MAP_before_after_IC_OOC.png"
     fig.savefig(savestr)
     plt.close()
 
@@ -264,7 +265,7 @@ for dz in data_BP_stratComorbid:
     plt.xlabel('MAP before')
     plt.ylabel('MAP after')
     plt.title('MAP before and after MHT intervention')
-    savestr = "plt_strat_" + dz + "_scatter_sameplot_MAP_before_after_IC_OOC.png"
+    savestr =  output_dir + "plt_strat_" + dz + "_scatter_sameplot_MAP_before_after_IC_OOC.png"
     fig.savefig(savestr)
     plt.close()
 
@@ -279,7 +280,7 @@ for dz in data_BP_stratComorbid:
     plt.xlabel('Systolic BP before')
     plt.ylabel('Systolic BP after')
     plt.title('Systolic BP before and after MHT intervention')
-    savestr = "plt_strat_" + dz + "_scatter_sameplot_SBP_before_after_IC_OOC.png"
+    savestr =  output_dir + "plt_strat_" + dz + "_scatter_sameplot_SBP_before_after_IC_OOC.png"
     fig.savefig(savestr)
     plt.close()
     
@@ -294,7 +295,7 @@ for dz in data_BP_stratComorbid:
     plt.xlabel('Diastolic BP before')
     plt.ylabel('Diastolic BP after')
     plt.title('Diastolic BP before and after MHT intervention')
-    savestr = "plt_strat_" + dz + "_scatter_sameplot_DBP_before_after_IC_OOC.png"
+    savestr =  output_dir + "plt_strat_" + dz + "_scatter_sameplot_DBP_before_after_IC_OOC.png"
     fig.savefig(savestr)
     plt.close()
     
@@ -312,7 +313,7 @@ for dz in data_BP_stratComorbid:
     plt.xlabel('-log(P)')
     plt.ylabel('Probability')
     plt.title('OUT OF CONTROL, n=' + str(len(ks_MAP_OOC_minsLogP)))
-    savestr = "plt_strat_" + dz + "_hist_MAP_minusLogP_before_after_IC_OOC.png"
+    savestr =  output_dir + "plt_strat_" + dz + "_hist_MAP_minusLogP_before_after_IC_OOC.png"
     fig.savefig(savestr)
     plt.close()     
     
@@ -334,7 +335,7 @@ for dz in data_BP_stratComorbid:
     plt.xlabel('P value')
     plt.ylabel('Probability')
     plt.title('ALL PATIENTS, n=' + str(len( list(ks_MAP_OOC_pval)+ list(ks_MAP_IC_pval))))
-    savestr = "plt_strat_" + dz + "_hist_MAP_Pval_before_after_IC_OOC.png"
+    savestr =  output_dir + "plt_strat_" + dz + "_hist_MAP_Pval_before_after_IC_OOC.png"
     fig.savefig(savestr)
     plt.close()     
 
@@ -357,7 +358,7 @@ for dz in data_BP_stratComorbid:
     plt.xlabel('P value')
     plt.ylabel('Probability')
     plt.title('ALL PATIENTS, n=' + str(len( list(ks_SBP_OOC_pval) + list(ks_SBP_IC_pval))))
-    savestr = "plt_strat_" + dz + "_hist_SBP_Pval_before_after_IC_OOC.png"
+    savestr =  output_dir + "plt_strat_" + dz + "_hist_SBP_Pval_before_after_IC_OOC.png"
     fig.savefig(savestr)
     plt.close()     
 
@@ -379,7 +380,7 @@ for dz in data_BP_stratComorbid:
     plt.xlabel('P value')
     plt.ylabel('Probability')
     plt.title('ALL PATIENTS, n=' + str(len( list(ks_DBP_OOC_pval) + list(ks_DBP_IC_pval))))
-    savestr = "plt_strat_" + dz + "_hist_DBP_Pval_before_after_IC_OOC.png"
+    savestr =  output_dir + "plt_strat_" + dz + "_hist_DBP_Pval_before_after_IC_OOC.png"
     fig.savefig(savestr)
     plt.close()     
 
@@ -463,7 +464,7 @@ for dz in data_BP_stratComorbid:
         ax1.text(pos[tick], top-(top*0.05), upperLabels[tick],
         horizontalalignment='center', size='x-small', weight=weights[k],
         color=boxColors[k])
-    savestr = "plt_strat_" + dz + '_boxplot_samp_MAP_SBP_DBP_IC_ruid_' + str(samp_ruid) + '_before_after.png'
+    savestr =  output_dir + "plt_strat_" + dz + '_boxplot_samp_MAP_SBP_DBP_IC_ruid_' + str(samp_ruid) + '_before_after.png'
     savefig(savestr)
     
     print("making QQ plots")
@@ -476,7 +477,7 @@ for dz in data_BP_stratComorbid:
     stats.probplot(ks_MAP_IC_minsLogP, dist="norm", plot=pylab)
     subplot(122)
     stats.probplot(ks_MAP_OOC_minsLogP, dist="norm", plot=pylab)
-    savestr = "plt_strat_" + dz + '_QQplot_KStest_minslogPvals_MAP_IC_OOC.png'
+    savestr =  output_dir + "plt_strat_" + dz + '_QQplot_KStest_minslogPvals_MAP_IC_OOC.png'
     savefig(savestr)
 
     #QQ plot of KS scores - MAP: raw Pval
@@ -488,7 +489,7 @@ for dz in data_BP_stratComorbid:
     stats.probplot(ks_MAP_IC_pval, dist="norm", plot=pylab)
     subplot(122)
     stats.probplot(ks_MAP_OOC_pval, dist="norm", plot=pylab)
-    savestr = "plt_strat_" + dz + '_QQplot_KStest_Pval_MAP_IC_OOC.png'
+    savestr =  output_dir + "plt_strat_" + dz + '_QQplot_KStest_Pval_MAP_IC_OOC.png'
     savefig(savestr)
 
     #QQ plot of KS scores - SBP: raw Pval
@@ -500,7 +501,7 @@ for dz in data_BP_stratComorbid:
     stats.probplot(ks_SBP_IC_pval, dist="norm", plot=pylab)
     subplot(122)
     stats.probplot(ks_SBP_OOC_pval, dist="norm", plot=pylab)
-    savestr = "plt_strat_" + dz + '_QQplot_KStest_Pval_SBP_IC_OOC.png'
+    savestr =  output_dir + "plt_strat_" + dz + '_QQplot_KStest_Pval_SBP_IC_OOC.png'
     savefig(savestr)
 
     #QQ plot of KS scores - DBP: raw Pval
@@ -512,22 +513,7 @@ for dz in data_BP_stratComorbid:
     stats.probplot(ks_DBP_IC_pval, dist="norm", plot=pylab)
     subplot(122)
     stats.probplot(ks_DBP_OOC_pval, dist="norm", plot=pylab)
-    savestr = "plt_strat_" + dz + '_QQplot_KStest_Pval_DBP_IC_OOC.png'
+    savestr =  output_dir + "plt_strat_" + dz + '_QQplot_KStest_Pval_DBP_IC_OOC.png'
     savefig(savestr)
 
 fstream.close()
-
-                                                                                                                                     
-##OUTPUT:###########################################################
-#>>> ks_2samp(l_MAP_before_IC, l_MAP_after_IC)
-#(0.13137755102040816, 2.2358022718190729e-06)
-#>>> ks_2samp(l_MAP_before_OOC, l_MAP_after_OOC)
-#(0.076066790352504632, 0.084247869703036021)
-#>>> ks_2samp(l_SYSTOLIC_before_IC, l_SYSTOLIC_after_IC)
-#(0.12117346938775508, 1.7300138094131006e-05)
-#>>> ks_2samp(l_SYSTOLIC_before_OOC, l_SYSTOLIC_after_OOC)
-#(0.13729128014842307, 6.6133600470404111e-05)
-#>>> ks_2samp(l_DIASTOLIC_before_IC, l_DIASTOLIC_after_IC)                    
-#(0.11352040816326531, 7.2009221738795993e-05)
-#>>> ks_2samp(l_DIASTOLIC_before_OOC, l_DIASTOLIC_after_OOC)
-#(0.068645640074211478, 0.15159630649480219)  

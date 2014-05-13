@@ -11,7 +11,8 @@ import matplotlib.pyplot as plt
 import datetime as datetime
 
 print("running ./KS_2samp_test_before_after_MHT.py")
-output_file = './KS_2samp_test_before_after_MHT.out'
+output_file = '../analysis_output/KS_2samp_test_before_after_MHT.out'
+output_dir = '../analysis_output/'
 fstream = open(output_file, 'a')
 
 ## calculate before/after MAP's for all pts in MHT
@@ -231,7 +232,7 @@ plt.plot(x_OOC_map, x_OOC_map, 'b', l_MAP_before_OOC, l_MAP_after_OOC, 'rs')
 plt.xlabel('MAP before')
 plt.ylabel('MAP after')
 plt.title('OUT OF CONTROL')
-fig.savefig("plt_scatter_MAP_before_after_IC_OOC.png")
+fig.savefig(output_dir + "plt_scatter_MAP_before_after_IC_OOC.png")
 plt.close()
 
 #plot with both IC and OOC in  the same plot - MAP
@@ -244,7 +245,7 @@ plt.legend(['no change', 'In Control', 'Out of Control'], loc='upper left')
 plt.xlabel('MAP before')
 plt.ylabel('MAP after')
 plt.title('MAP before and after MHT intervention')
-fig.savefig("plt_scatter_sameplot_MAP_before_after_IC_OOC.png")
+fig.savefig(output_dir + "plt_scatter_sameplot_MAP_before_after_IC_OOC.png")
 plt.close()
 
 
@@ -258,7 +259,7 @@ plt.legend(['no change', 'In Control', 'Out of Control'], loc='upper left')
 plt.xlabel('Systolic BP before')
 plt.ylabel('Systolic BP after')
 plt.title('Systolic BP before and after MHT intervention')
-fig.savefig("plt_scatter_sameplot_SBP_before_after_IC_OOC.png")
+fig.savefig(output_dir + "plt_scatter_sameplot_SBP_before_after_IC_OOC.png")
 plt.close()
 
 
@@ -272,7 +273,7 @@ plt.legend(['no change', 'In Control', 'Out of Control'], loc='upper left')
 plt.xlabel('Diastolic BP before')
 plt.ylabel('Diastolic BP after')
 plt.title('Diastolic BP before and after MHT intervention')
-fig.savefig("plt_scatter_sameplot_DBP_before_after_IC_OOC.png")
+fig.savefig(output_dir + "plt_scatter_sameplot_DBP_before_after_IC_OOC.png")
 plt.close()
 
 
@@ -289,7 +290,7 @@ plt.hist(ks_MAP_OOC_minsLogP, bins=100, normed=True)
 plt.xlabel('-log(P)')
 plt.ylabel('Probability')
 plt.title('OUT OF CONTROL, n=' + str(len(ks_MAP_OOC_minsLogP)))
-fig.savefig("plt_hist_MAP_minusLogP_before_after_IC_OOC.png")
+fig.savefig(output_dir + "plt_hist_MAP_minusLogP_before_after_IC_OOC.png")
 plt.close()     
 
 #P-values: raw P value: MAP
@@ -310,7 +311,7 @@ plt.hist(np.array( list(ks_MAP_OOC_pval) + list(ks_MAP_IC_pval)), bins=100, norm
 plt.xlabel('P value')
 plt.ylabel('Probability')
 plt.title('ALL PATIENTS, n=' + str(len( list(ks_MAP_OOC_pval)+ list(ks_MAP_IC_pval))))
-fig.savefig("plt_hist_MAP_Pval_before_after_IC_OOC.png")
+fig.savefig(output_dir + "plt_hist_MAP_Pval_before_after_IC_OOC.png")
 plt.close()     
 
 #P-values: raw P value: SBP
@@ -332,7 +333,7 @@ plt.hist(np.array( list(ks_SBP_OOC_pval) + list(ks_SBP_IC_pval)), bins=100, norm
 plt.xlabel('P value')
 plt.ylabel('Probability')
 plt.title('ALL PATIENTS, n=' + str(len( list(ks_SBP_OOC_pval) + list(ks_SBP_IC_pval))))
-fig.savefig("plt_hist_SBP_Pval_before_after_IC_OOC.png")
+fig.savefig(output_dir + "plt_hist_SBP_Pval_before_after_IC_OOC.png")
 plt.close()     
 
 #P-values: raw P value: DBP
@@ -353,7 +354,7 @@ plt.hist(np.array( list(ks_DBP_OOC_pval) + list(ks_DBP_IC_pval)), bins=100, norm
 plt.xlabel('P value')
 plt.ylabel('Probability')
 plt.title('ALL PATIENTS, n=' + str(len( list(ks_DBP_OOC_pval) + list(ks_DBP_IC_pval))))
-fig.savefig("plt_hist_DBP_Pval_before_after_IC_OOC.png")
+fig.savefig(output_dir + "plt_hist_DBP_Pval_before_after_IC_OOC.png")
 plt.close()     
 
 #sample for an IC patient -- check to see key is in d_bp_before_after_MHT!#######
@@ -435,7 +436,7 @@ for tick, label in zip(range(numBoxes), ax1.get_xticklabels()):
     ax1.text(pos[tick], top-(top*0.05), upperLabels[tick],
     horizontalalignment='center', size='x-small', weight=weights[k],
     color=boxColors[k])
-savestr = 'plt_boxplot_samp_MAP_SBP_DBP_IC_ruid_' + str(samp_ruid) + '_before_after.png'
+savestr = output_dir + 'plt_boxplot_samp_MAP_SBP_DBP_IC_ruid_' + str(samp_ruid) + '_before_after.png'
 savefig(savestr)
 
 #QQ plot of KS scores - MAP: -logP
@@ -447,7 +448,7 @@ subplot(121)
 stats.probplot(ks_MAP_IC_minsLogP, dist="norm", plot=pylab)
 subplot(122)
 stats.probplot(ks_MAP_OOC_minsLogP, dist="norm", plot=pylab)
-savefig('plt_QQplot_KStest_minslogPvals_MAP_IC_OOC.png')
+savefig(output_dir + 'plt_QQplot_KStest_minslogPvals_MAP_IC_OOC.png')
 
 #QQ plot of KS scores - MAP: raw Pval
 import scipy.stats as stats
@@ -458,7 +459,7 @@ subplot(121)
 stats.probplot(ks_MAP_IC_pval, dist="norm", plot=pylab)
 subplot(122)
 stats.probplot(ks_MAP_OOC_pval, dist="norm", plot=pylab)
-savefig('plt_QQplot_KStest_Pval_MAP_IC_OOC.png')
+savefig(output_dir + 'plt_QQplot_KStest_Pval_MAP_IC_OOC.png')
 #QQ plot of KS scores - SBP: raw Pval
 import scipy.stats as stats
 import pylab
@@ -468,7 +469,7 @@ subplot(121)
 stats.probplot(ks_SBP_IC_pval, dist="norm", plot=pylab)
 subplot(122)
 stats.probplot(ks_SBP_OOC_pval, dist="norm", plot=pylab)
-savefig('plt_QQplot_KStest_Pval_SBP_IC_OOC.png')
+savefig(output_dir + 'plt_QQplot_KStest_Pval_SBP_IC_OOC.png')
 #QQ plot of KS scores - DBP: raw Pval
 import scipy.stats as stats
 import pylab
@@ -478,21 +479,6 @@ subplot(121)
 stats.probplot(ks_DBP_IC_pval, dist="norm", plot=pylab)
 subplot(122)
 stats.probplot(ks_DBP_OOC_pval, dist="norm", plot=pylab)
-savefig('plt_QQplot_KStest_Pval_DBP_IC_OOC.png')
+savefig(output_dir + 'plt_QQplot_KStest_Pval_DBP_IC_OOC.png')
 
 
-
-                                                                                                                                     
-##OUTPUT:###########################################################
-#>>> ks_2samp(l_MAP_before_IC, l_MAP_after_IC)
-#(0.13137755102040816, 2.2358022718190729e-06)
-#>>> ks_2samp(l_MAP_before_OOC, l_MAP_after_OOC)
-#(0.076066790352504632, 0.084247869703036021)
-#>>> ks_2samp(l_SYSTOLIC_before_IC, l_SYSTOLIC_after_IC)
-#(0.12117346938775508, 1.7300138094131006e-05)
-#>>> ks_2samp(l_SYSTOLIC_before_OOC, l_SYSTOLIC_after_OOC)
-#(0.13729128014842307, 6.6133600470404111e-05)
-#>>> ks_2samp(l_DIASTOLIC_before_IC, l_DIASTOLIC_after_IC)                    
-#(0.11352040816326531, 7.2009221738795993e-05)
-#>>> ks_2samp(l_DIASTOLIC_before_OOC, l_DIASTOLIC_after_OOC)
-#(0.068645640074211478, 0.15159630649480219)  

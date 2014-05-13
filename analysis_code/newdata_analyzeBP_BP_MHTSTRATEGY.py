@@ -3,7 +3,7 @@
 ##
 ##################################################################################
 from __future__ import print_function
-output_file = './newdata_analyzeBP_BP_MHTSTRATEGY.may6.out'
+output_file = '../analysis_output/newdata_analyzeBP_BP_MHTSTRATEGY.out'
 fstream = open(output_file, 'a')
 
 print("running newdata_analyzeBP_BP_MHTSTRATEGY.py")
