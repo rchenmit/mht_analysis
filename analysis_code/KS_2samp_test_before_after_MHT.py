@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 import datetime as datetime
 
 print("running ./KS_2samp_test_before_after_MHT.py")
-output_file = './KS_2samp_test_before_after_MHT.may6.out'
+output_file = './KS_2samp_test_before_after_MHT.out'
 fstream = open(output_file, 'a')
 
 ## calculate before/after MAP's for all pts in MHT

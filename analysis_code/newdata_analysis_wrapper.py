@@ -37,7 +37,7 @@ sys.path.append('./')
 
 ## run these scripts: ---------------------------------------------------------------------------------
 # read in and process data
-execfile('newdata_dataread_BP_MHTSTRATEGY_v1.py')
+##execfile('newdata_dataread_BP_MHTSTRATEGY_v2.py')
 # analyze BP intervals to determine IN CONTROL / OUT OF CONTROL status
 execfile('newdata_analyzeBP_BP_MHTSTRATEGY.py')
 # make lists of patients IN control or OUT of control for HYPERTENSION set

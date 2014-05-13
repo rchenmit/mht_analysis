@@ -91,23 +91,27 @@ for key in d_bp_clinician:
                 status_at_this_timestamp = ts_status_this_pt[timestamp][-1]#pick the last recorded status for this timestamp
             else:
                 status_at_this_timestamp = ts_status_this_pt[timestamp] #pick the status (its only one scalar)
-                if status_at_this_timestamp != last_status[-1]:
-                    if last_status[-2]==last_status[-1]: #if the status changed and there were two consecutive recordings of the same last status
-                        d_days_in_out[last_status[1]] += time_delta
-                        last_status[0] = last_status[1]
-                        last_status[1] = status_at_this_timestamp
-                    else:
-                        d_days_in_out[last_status[0]] += time_delta
-                        last_status[0] = last_status[0] #since there was only one instance of the new instance (doesn't have 2 consecutive) then we'll treat last_status[0] as the same as the status before it
-                        last_status[1] = status_at_this_timestamp
-                elif last_status[0] != fakestatus:
-                    d_days_in_out[last_status[0]] += time_delta
-                    last_status[0] = last_status[1]
-                    last_status[1] = status_at_this_timestamp
-                else:
+            #now count the number of days in the status
+            if status_at_this_timestamp != last_status[-1]:
+                if last_status[-2]==last_status[-1]: #if the status changed and there were two consecutive recordings of the same last status
                     d_days_in_out[last_status[1]] += time_delta
                     last_status[0] = last_status[1]
                     last_status[1] = status_at_this_timestamp
+                elif last_status[0]==fakestatus:
+                    last_status[0] = last_status[1]
+                    last_status[1] = status_at_this_timestamp
+                else:
+                    d_days_in_out[last_status[0]] += time_delta
+                    last_status[0] = last_status[0] #since there was only one instance of the new instance (doesn't have 2 consecutive) then we'll treat last_status[0] as the same as the status before it
+                    last_status[1] = status_at_this_timestamp
+            elif last_status[0] != fakestatus:
+                d_days_in_out[last_status[1]] += time_delta
+                last_status[0] = last_status[1]
+                last_status[1] = status_at_this_timestamp
+            else:#base case, where last_status[0] is fake status
+                d_days_in_out[last_status[1]] += time_delta
+                last_status[0] = last_status[1]
+                last_status[1] = status_at_this_timestamp
             last_timestamp = timestamp
         #now count how many days in /out and detemrine if mostly in or mostly out or mixed
         num_in = d_days_in_out[1]
@@ -166,23 +170,27 @@ for disease in d_other_diag_clinician:
                         status_at_this_timestamp = ts_status_this_pt[timestamp][-1]#pick the last recorded status for this timestamp
                     else:
                         status_at_this_timestamp = ts_status_this_pt[timestamp] #pick the status (its only one scalar)
-                        if status_at_this_timestamp != last_status[-1]:
-                            if last_status[-2]==last_status[-1]: #if the status changed and there were two consecutive recordings of the same last status
-                                d_days_in_out[last_status[1]] += time_delta
-                                last_status[0] = last_status[1]
-                                last_status[1] = status_at_this_timestamp
-                            else:
-                                d_days_in_out[last_status[0]] += time_delta
-                                last_status[0] = last_status[0] #since there was only one instance of the new instance (doesn't have 2 consecutive) then we'll treat last_status[0] as the same as the status before it
-                                last_status[1] = status_at_this_timestamp
-                        elif last_status[0] != fakestatus:
-                            d_days_in_out[last_status[0]] += time_delta
-                            last_status[0] = last_status[1]
-                            last_status[1] = status_at_this_timestamp
-                        else:
+                    #now count the number of days in the status
+                    if status_at_this_timestamp != last_status[-1]:
+                        if last_status[-2]==last_status[-1]: #if the status changed and there were two consecutive recordings of the same last status
                             d_days_in_out[last_status[1]] += time_delta
                             last_status[0] = last_status[1]
                             last_status[1] = status_at_this_timestamp
+                        elif last_status[0]==fakestatus:
+                            last_status[0] = last_status[1]
+                            last_status[1] = status_at_this_timestamp
+                        else:
+                            d_days_in_out[last_status[0]] += time_delta
+                            last_status[0] = last_status[0] #since there was only one instance of the new instance (doesn't have 2 consecutive) then we'll treat last_status[0] as the same as the status before it
+                            last_status[1] = status_at_this_timestamp
+                    elif last_status[0] != fakestatus:
+                        d_days_in_out[last_status[1]] += time_delta
+                        last_status[0] = last_status[1]
+                        last_status[1] = status_at_this_timestamp
+                    else:
+                        d_days_in_out[last_status[1]] += time_delta
+                        last_status[0] = last_status[1]
+                        last_status[1] = status_at_this_timestamp
                     last_timestamp = timestamp
                 #now count how many days in /out and detemrine if mostly in or mostly out or mixed
                 num_in = d_days_in_out[1]
