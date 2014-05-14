@@ -28,7 +28,7 @@ d_pregnant_before = dict()
 d_pregnant_after = dict()
 
 for ruid in df_BMI_aggregate.index:
-    if ruid in d_bp_clinician:
+    if ruid in d_bp_clinician: #there are MHT recordings for their BP
         date_mht_first_record = min(d_bp_clinician[ruid].index).date()
         date_2_yr_before = date_mht_first_record - dt.timedelta(360*2)
         df_this_pt = df_BMI[df_BMI['RUID']==ruid]
@@ -53,16 +53,16 @@ for ruid in df_BMI_aggregate.index:
         d_change_BMI[ruid] = change_BMI
         d_pregnant_before[ruid] = pregnant_before_ind
         d_pregnant_after[ruid] = pregnant_after_ind
-    else:
-        pregnant_before_ind = -999
-        pregnant_after_ind = -999
-        change_BMI = -999
+    else: #there are NOT MHT recordings for their BP
+        pregnant_before_ind = np.nan
+        pregnant_after_ind = np.nan
+        change_BMI = np.nan
         d_change_BMI[ruid] = change_BMI
         d_pregnant_before[ruid] = pregnant_before_ind
         d_pregnant_after[ruid] = pregnant_after_ind
 
 ## join other features to aggreagate        
-df_BMI_aggregate = df_BMI_aggregate.join( pd.DataFrame(d_change_BMI.items(), columns=['RUID', 'change_BMI']) , on = 'RUID')
-df_BMI_aggregate = df_BMI_aggregate.join( pd.DataFrame(d_pregnant_before.items(), columns=['RUID', 'pregnant_before']), on = 'RUID')
-df_BMI_aggregate = df_BMI_aggregate.join( pd.DataFrame(d_pregnant_after.items(), columns=['RUID', 'pregnant_after']), on = 'RUID' )
+df_BMI_aggregate = pd.merge( df_BMI_aggregate, pd.DataFrame(d_change_BMI.items(), columns=['RUID', 'change_BMI']) , how='outer')
+df_BMI_aggregate = pd.merge( df_BMI_aggregate, pd.DataFrame(d_pregnant_before.items(), columns=['RUID', 'pregnant_before']), how='outer')
+df_BMI_aggregate = pd.merge( df_BMI_aggregate, pd.DataFrame(d_pregnant_after.items(), columns=['RUID', 'pregnant_after']),  how='outer')
 
