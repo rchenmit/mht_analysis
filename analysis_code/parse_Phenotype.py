@@ -12,9 +12,9 @@ def convert_dtdays_to_years(x):
     else:
         return x
 
-
 ## options
 input_folder = '../../data/new_data_20140416/Data_20140409/'
+output_dir = '../analysis_output/'
 
 ## Prepare data, read data
 filename = input_folder + 'Phenotype_04082014.csv'
@@ -35,3 +35,13 @@ df_Phenotype['AGE_DEATH'] = (df_Phenotype['DOD'] - df_Phenotype['DOB']).astype(d
 df_Phenotype['AGE_ENGAGE'] = df_Phenotype['AGE_ENGAGE'].apply(lambda x:  convert_dtdays_to_years(x) )
 df_Phenotype['AGE_DEATH'] = df_Phenotype['AGE_DEATH'].apply(lambda x:  convert_dtdays_to_years(x) )
 
+
+
+## plot ages
+fig = plt.figure(1)
+plt.hist(df_Phenotype['AGE_ENGAGE'], bins=100)
+plt.xlabel('Age at MHT engage date')
+plt.ylabel('# subjects')
+savestr = output_dir + 'plot_hist_MHT_age_ENGAGE_DATE.png'
+fig.savefig(savestr)
+plt.close()
