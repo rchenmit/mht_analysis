@@ -1,3 +1,6 @@
+## load saved pickles
+
+if sys.version_info.major == 3:
 ## wrapper
 
 ## set these options
@@ -48,10 +51,3 @@ if bool_initial_run:
     # make lists of patients IN control or OUT of control for HYPERTENSION set
     execfile('newdata_make_list_pts_IN_OUT.py')
     # KS test, etc for patients in the HYPERTENSION set
-    execfile('./KS_2samp_test_before_after_MHT.py')
-    # KS test, etc for patients in the other MHT comorbities: DIABETES and CHF sets
-    execfile('./KS_2samp_test_before_after_MHT_stratComorbid.py')
-
-if not bool_initial_run:
-    execfile('load_saved_pickles.py')
-    

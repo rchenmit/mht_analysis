@@ -34,7 +34,6 @@ file_classes = datadir + 'MedClasses.xlsx'
 file_BP_clinician = datadir + 'mht_strategy_20140407.txt'
 file_BP_record = datadir + 'BP_04082014.csv'
 file_eGFR_record = datadir + 'EGFR_04082014.csv'
-pickle_dir = '../analysis_output/pickle'
 
 ## Functions  ############################################################################################################
 def read_csv_to_df(filename, delim):
