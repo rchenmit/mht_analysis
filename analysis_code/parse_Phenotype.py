@@ -45,3 +45,29 @@ plt.ylabel('# subjects')
 savestr = output_dir + 'plot_hist_MHT_age_ENGAGE_DATE.png'
 fig.savefig(savestr)
 plt.close()
+
+fig = plt.figure(1)
+df_age_death = df_Phenotype.ix[df_Phenotype['AGE_DEATH']>0]['AGE_DEATH']
+plt.hist(df_age_death, bins=100)
+plt.xlabel('Age at MHT death date')
+plt.ylabel('# subjects')
+savestr = output_dir + 'plot_hist_MHT_AGE_DEATH.png'
+fig.savefig(savestr)
+plt.close()
+
+
+
+## print other stats
+counter_SEX =  Counter(list(df_Phenotype['SEX']))
+counter_ETHNICITY = Counter(list(df_Phenotype['ETHNICITY']))
+counter_RACE = Counter(list(df_Phenotype['RACE']))
+counter_MHT_STATUS = Counter(list(df_Phenotype['MHT_STATUS']))
+
+print "SEX counts: "
+print counter_SEX
+print "ETHNICITY counts: "
+print counter_ETHNICITY
+print "RACE counts:"
+print counter_RACE
+print "MHT status counts:"
+print counter_MHT_STATUS

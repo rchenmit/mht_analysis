@@ -29,12 +29,12 @@ d_pregnant_after = dict()
 
 for ruid in df_BMI_aggregate.index:
     if ruid in d_bp_clinician: #there are MHT recordings for their BP
-        date_mht_first_record = min(d_bp_clinician[ruid].index).date()
-        date_2_yr_before = date_mht_first_record - dt.timedelta(360*2)
+        date_mht_engage = df_Phenotype[df_Phenotype.RUID == ruid]['ENGAGE_DATE'].astype(dt.datetime).values[0]
+        date_2_yr_before = date_mht_engage - dt.timedelta(360*2)
         df_this_pt = df_BMI[df_BMI['RUID']==ruid]
         df_this_pt = df_this_pt.sort('Weight_Date')
-        condition_before_time_window = (df_this_pt['Weight_Date'] < date_mht_first_record) &  (df_this_pt['Weight_Date']> date_2_yr_before)
-        condition_after_time_window = (df_this_pt['Weight_Date'] > date_mht_first_record) 
+        condition_before_time_window = (df_this_pt['Weight_Date'] < date_mht_engage) &  (df_this_pt['Weight_Date']> date_2_yr_before)
+        condition_after_time_window = (df_this_pt['Weight_Date'] > date_mht_engage) 
         
         mean_BMI_before = np.mean(df_this_pt[condition_before_time_window]['BMI']) if len(df_this_pt[condition_before_time_window]['BMI'])>0 else np.nan
         mean_BMI_after =  np.mean(df_this_pt[condition_after_time_window]['BMI'] ) if len(df_this_pt[condition_after_time_window]['BMI'])>0 else np.nan
