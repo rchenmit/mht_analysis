@@ -54,5 +54,15 @@ if bool_initial_run:
 
 if not bool_initial_run:
     execfile('load_saved_pickles.py')
-    execfile('parse_BMI.py')
     execfile('parse_Phenotype.py')
+    execfile('parse_BMI.py')
+    execfile('parse_ECG.py')
+    execfile('parse_EGFR.py')
+
+
+
+
+
+
+
+
