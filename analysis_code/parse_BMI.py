@@ -65,4 +65,4 @@ for ruid in df_BMI_aggregate.index:
 df_BMI_aggregate = pd.merge( df_BMI_aggregate, pd.DataFrame(d_change_BMI.items(), columns=['RUID', 'change_BMI']) , how='outer')
 df_BMI_aggregate = pd.merge( df_BMI_aggregate, pd.DataFrame(d_pregnant_before.items(), columns=['RUID', 'pregnant_before']), how='outer')
 df_BMI_aggregate = pd.merge( df_BMI_aggregate, pd.DataFrame(d_pregnant_after.items(), columns=['RUID', 'pregnant_after']),  how='outer')
-
+df_BMI_aggregate = df_BMI_aggregate.rename( columns = {'Weight': 'AVG_WEIGHT',  'Height': 'AVG_HEIGHT', 'BMI': 'AVG_BMI'} )

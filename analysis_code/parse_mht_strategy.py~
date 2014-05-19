@@ -43,4 +43,3 @@ for ruid in df_EGFR_aggregate.index:
 
 ## join other features to aggreagate        
 df_EGFR_aggregate = pd.merge( df_EGFR_aggregate, pd.DataFrame(d_change_EGFR.items(), columns=['RUID', 'change_EGFR']) , how='outer')
-df_EGFR_aggregate = df_EGFR_aggregate.rename(columns = {'EGFR':'MEAN_EGFR'})

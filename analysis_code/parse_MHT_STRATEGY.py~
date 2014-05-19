@@ -10,9 +10,9 @@ import datetime as dt
 input_folder = '../../data/new_data_20140416/Data_20140409/'
 
 ## Prepare data, read data
-filename = input_folder + 'EGFR_04082014.csv'
+filename = input_folder + 'mht_strategy_20140407.txt'
 pd.set_option('display.line_width', 300)
-df_EGFR = pd.read_csv(filename)
+df_MHT_STRATEGY = pd.read_csv(filename)
 
 df_EGFR['LAB_DATE'] = pd.to_datetime(df_EGFR['LAB_DATE'])
 
@@ -43,4 +43,3 @@ for ruid in df_EGFR_aggregate.index:
 
 ## join other features to aggreagate        
 df_EGFR_aggregate = pd.merge( df_EGFR_aggregate, pd.DataFrame(d_change_EGFR.items(), columns=['RUID', 'change_EGFR']) , how='outer')
-df_EGFR_aggregate = df_EGFR_aggregate.rename(columns = {'EGFR':'MEAN_EGFR'})
