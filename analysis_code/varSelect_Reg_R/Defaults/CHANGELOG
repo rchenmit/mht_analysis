@@ -1,0 +1,72 @@
+Version 1.1-1
+
+* Bug fix - when using UTF-8 sQuote creates directional single quotes,
+  causing setDefaults to miscode char vectors with length > 2, 
+  e.g. c("a","b") failed when using UTF-8. Thanks to Kurt Hornik for
+  setting me in the right direction as to a fix.
+  All was fine until importDefaults tries to parse...
+
+Version 1.1-0
+
+* Major change in useDefaults
+  Both hard-coded and addDefaults utilize importDefaults
+  to load default argument values. Borrowing techniques
+  from both trace and mtrace (package:debug) enabled 
+  in-place modification of functions to allow for essentially
+  transparent usage.  No workspace clutter, or leftover
+  effects when session ends.  The only long-term changes are
+  to functions defined in the users workspace, which if removeDefaults is
+  not called on them will maintain a check and call to
+  importDefaults - IFF it exists.
+
+Version 1.0-6
+
+* now handles *ANY* value for any formal argument - except NULL
+  NULL values can only be set in the call itself - as it is
+  difficult to manage from a named list like options - and
+  probably fairly useless
+
+* Added regression test tests/Defaults.test.R
+  Simply source into R to run test - nothing fancy
+
+* fixed major bug in handling functions within namespaces
+  Thanks to John Chambers and Dirk Eddelbuettel who
+  helped identify and guide me to a solution while
+  at useR! 2007.
+
+* fixed minor issue with getDefaults truncating
+  function names after first '.', e.g. getSymbols.MySQl
+  became getSymbols
+
+* added partial matching in setDefaults
+
+* added warning if match was not made to formal arguments
+  during call to setDefaults
+
+
+Version 1.0-5
+
+* New vignette describing package
+
+* Fixed accidental multiple additions of .importDefaults()
+  when useDefaults was called more than once on an object
+
+
+Version 1.0-4
+
+* Documentation now is spread out over multiple
+  files.
+
+* Fixed bug where if unDefaults was called on
+  a function defined in the Global environment
+  with importDefaults it would delete the function
+  This _shouldn't_ happen.
+
+* Fixed setDefaults problem where if a value was
+  set to NULL by the caller, it was removed from
+  the list of Defaults, and became impossible
+  to reset to a new value
+
+* Positional matching of args even if Default is set
+  Also can now use partial matching for arguments to
+  override the global Defaults from the fun call.

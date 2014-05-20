@@ -1,0 +1,30 @@
+## Robert Chen
+## Monday 5/12/2014
+##
+## compiling all relevant data for regression into one dataframe
+## for ease of use in regression
+##
+## note: there are MISSING VALUES!!! <- needs further processing for analysis if using sklearn
+##
+
+
+## build dataframes for BP before/after ####################################################################################
+
+#predominant conrol status
+df_BP_STATUS = pd.DataFrame(d_bp_status_pt_level_clinician.items(), columns=['RUID', 'BP_STATUS']) #predominant BP status
+df_BP_STATUS['BP_STATUS'][df_BP_STATUS['BP_STATUS']== -1] = 0
+#BP change before/after MHT engage date
+df_BP_CHANGE = pd.DataFrame(d_bp_status_pt_level_clinician.items(), columns=['RUID', 'BP_CHANGE']) #change in BP
+
+
+## gather data for training examples / features ####################################################################################
+#features for training examples 
+df_Phenotype_BMI_ECG_EGFR = pd.merge(df_Phenotype, df_BMI_aggregate, left_on = 'RUID' , right_on = 'RUID', how = 'outer') #add Phenotype and BMI
+df_Phenotype_BMI_ECG_EGFR = pd.merge(df_Phenotype_BMI_ECG_EGFR, df_ECG_aggregate, left_on = 'RUID' , right_on = 'RUID', how = 'outer') #add ECG
+df_Phenotype_BMI_ECG_EGFR = pd.merge(df_Phenotype_BMI_ECG_EGFR, df_EGFR_aggregate, left_on = 'RUID' , right_on = 'RUID', how = 'outer') #add EGFR
+
+# big dataframe with target clases ('BP_STATUS') and features for training examples
+df_BPSTATUS_Phenotype_BMI_ECG_EGFR = pd.merge(df_BP_STATUS, df_Phenotype_BMI_ECG_EGFR, left_on = 'RUID', right_on='RUID', how = 'outer')
+
+
+## impute missing values?? - CHANGE THIS!

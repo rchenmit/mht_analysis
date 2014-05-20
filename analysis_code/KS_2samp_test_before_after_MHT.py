@@ -33,25 +33,26 @@ for key in d_bp_clinician:
         df_bp_this_pt['MAP'] = 1/float(3)*df_bp_this_pt['SYSTOLIC'] + 2/float(3)*df_bp_this_pt['DIASTOLIC']
         df_bp_this_pt = df_bp_this_pt.sort_index()
         date_mht_first_record = min(d_bp_clinician[key].index).date()
-        date_1_yr_before = date_mht_first_record - datetime.timedelta(360*1)
-        date_2_yr_before = date_mht_first_record - datetime.timedelta(360*2)
-        date_3_yr_before = date_mht_first_record - datetime.timedelta(360*3)
+        date_mht_engage_date = df_Phenotype[df_Phenotype['RUID'] == key]['ENGAGE_DATE'].values[0].date()
+        date_1_yr_before = date_mht_engage_date - datetime.timedelta(360*1)
+        date_2_yr_before = date_mht_engage_date - datetime.timedelta(360*2)
+        date_3_yr_before = date_mht_engage_date - datetime.timedelta(360*3)
         
-        condition_before_time_window = (df_bp_this_pt.sort_index().index.date < date_mht_first_record) & (df_bp_this_pt.sort_index().index.date > date_2_yr_before)
+        condition_before_time_window = (df_bp_this_pt.sort_index().index.date < date_mht_engage_date) & (df_bp_this_pt.sort_index().index.date > date_2_yr_before)
 
         median_systolic_before = np.median(df_bp_this_pt.loc[condition_before_time_window]['SYSTOLIC'])
         median_diastolic_before = np.median(df_bp_this_pt.loc[condition_before_time_window]['DIASTOLIC'])
         median_MAP_before = np.median(df_bp_this_pt.loc[condition_before_time_window]['MAP'])
-        median_systolic_after = np.median(df_bp_this_pt.loc[df_bp_this_pt.index.date > date_mht_first_record]['SYSTOLIC'])
-        median_diastolic_after = np.median(df_bp_this_pt.loc[df_bp_this_pt.index.date > date_mht_first_record]['DIASTOLIC'])
-        median_MAP_after = np.median(df_bp_this_pt.loc[df_bp_this_pt.index.date > date_mht_first_record]['MAP'])#
+        median_systolic_after = np.median(df_bp_this_pt.loc[df_bp_this_pt.index.date > date_mht_engage_date]['SYSTOLIC'])
+        median_diastolic_after = np.median(df_bp_this_pt.loc[df_bp_this_pt.index.date > date_mht_engage_date]['DIASTOLIC'])
+        median_MAP_after = np.median(df_bp_this_pt.loc[df_bp_this_pt.index.date > date_mht_engage_date]['MAP'])#
 
         l_this_pt_MAP_before = list(df_bp_this_pt.loc[condition_before_time_window]['MAP'])
-        l_this_pt_MAP_after =  list(df_bp_this_pt.loc[df_bp_this_pt.index.date > date_mht_first_record]['MAP'])
+        l_this_pt_MAP_after =  list(df_bp_this_pt.loc[df_bp_this_pt.index.date > date_mht_engage_date]['MAP'])
         l_this_pt_SYSTOLIC_before = list(df_bp_this_pt.loc[condition_before_time_window]['SYSTOLIC'])
-        l_this_pt_SYSTOLIC_after =  list(df_bp_this_pt.loc[df_bp_this_pt.index.date > date_mht_first_record]['SYSTOLIC'])
+        l_this_pt_SYSTOLIC_after =  list(df_bp_this_pt.loc[df_bp_this_pt.index.date > date_mht_engage_date]['SYSTOLIC'])
         l_this_pt_DIASTOLIC_before = list(df_bp_this_pt.loc[condition_before_time_window]['DIASTOLIC'])
-        l_this_pt_DIASTOLIC_after =  list(df_bp_this_pt.loc[df_bp_this_pt.index.date > date_mht_first_record]['DIASTOLIC'])#
+        l_this_pt_DIASTOLIC_after =  list(df_bp_this_pt.loc[df_bp_this_pt.index.date > date_mht_engage_date]['DIASTOLIC'])#
 
         d_bp_before_after_MHT['BEFORE'][key] = dict()
         d_bp_before_after_MHT['AFTER'][key] = dict()

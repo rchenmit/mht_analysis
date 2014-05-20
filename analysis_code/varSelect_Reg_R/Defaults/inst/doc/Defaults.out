@@ -1,0 +1,7 @@
+\BOOKMARK [1][-]{section.1}{Introduction}{}
+\BOOKMARK [1][-]{section.2}{The End User: setDefaults }{}
+\BOOKMARK [1][-]{section.3}{The Developer: using importDefaults}{}
+\BOOKMARK [1][-]{section.4}{How it works internally}{}
+\BOOKMARK [2][-]{subsection.4.1}{Where defaults are stored}{section.4}
+\BOOKMARK [2][-]{subsection.4.2}{How functions gain access}{section.4}
+\BOOKMARK [1][-]{section.5}{Conclusion}{}

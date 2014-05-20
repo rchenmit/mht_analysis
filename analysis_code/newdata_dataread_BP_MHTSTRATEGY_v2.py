@@ -106,15 +106,15 @@ df_bp_record = read_csv_to_df(file_BP_record, ',')
 df_egfr_record = read_csv_to_df(file_eGFR_record, ',')
 
 #pickle
-with open(r"df_bp_clinician.pickle", "wb") as output_file:
+with open(pickle_dir + "df_bp_clinician.pickle", "wb") as output_file:
     pickle.dump(df_bp_clinician, output_file)
 output_file.close()
 
-with open(r"df_bp_record.pickle", "wb") as output_file:
+with open(pickle_dir + "df_bp_record.pickle", "wb") as output_file:
     pickle.dump(df_bp_record, output_file)
 output_file.close()
 
-with open(r"df_egfr_record.pickle", "wb") as output_file:
+with open(pickle_dir + "df_egfr_record.pickle", "wb") as output_file:
     pickle.dump(df_egfr_record, output_file)
 output_file.close()
 
@@ -221,11 +221,14 @@ counter_control_status = Counter(val for val in d_bp_status_pt_level.values())
 print(counter_control_status)
 
 #pickle:
-with open(r"d_bp_record.pickle", "wb") as output_file:
+with open(pickle_dir + "d_bp_record.pickle", "wb") as output_file:
     pickle.dump(d_bp_record, output_file)
 output_file.close()
 
-with open(r"d_bp_status_pt_level.pickle", "wb") as output_file:
+with open(pickle_dir + "d_bp_status_pt_level.pickle", "wb") as output_file:
     pickle.dump(d_bp_status_pt_level, output_file)
 output_file.close()
 
+with open(pickle_dir + "list_ruid.pickle", "wb") as output_file:
+    pickle.dump(list_ruid, output_file)
+output_file.close()

@@ -1,0 +1,252 @@
+%\VignetteIndexEntry{Introduction to Defaults}
+\documentclass{article}
+\usepackage{hyperref}
+\hypersetup{colorlinks,%
+            citecolor=black,%
+            linkcolor=blue,%
+            urlcolor=blue,%
+            }
+
+\title{\bf Introduction to Defaults }
+\author{Jeffrey A. Ryan \\
+       jeff.a.ryan@gmail.com}
+\date{August 18, 2007}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+\section{Introduction}
+A common problem when writing functions
+for use by others is deciding upon sensible
+argument defaults that will appeal to most of
+your target user's daily  needs.
+
+\vspace{3mm}
+\noindent
+As an end user, often these defaults may not fit
+the problem at hand, and will require some fine-tuning
+to make the function perform as desired.  Additionally,
+while all 
+values may be changed within an actual
+function call, it may not always be desirable to
+have to remember the new defaults, or to re-enter
+them with each function call.
+
+\vspace{3mm}
+\noindent
+The {\sf Defaults}~\cite{p} package allows the end user
+to pre-specify a default value for any formal argument
+in a given function, and to {\em force} the function
+to use these defaults. For the function authors it
+is no longer necessary to hand-code checks to
+{\sf R}'s internal {\sf options}, as the addition
+of one function call at the beginning of any function
+needing access to user specified defaults will 
+manage the process for them. 
+
+\vspace{3mm}
+\noindent
+This document will cover the {\sf Defaults} package
+from the perspectives of the user and the developer,
+as well as give some detail as to its implementation. We begin
+with how the {\sf R} end user can benefit from using
+{\sf Defaults}.
+
+
+\section{The End User: {\tt setDefaults} }
+Every person using R, whether for analysis or as a
+developer, is an end user. Countless functions
+are used within a typical session, often with
+multiple optional argument settings for each.
+One of the most common is {\tt ls}. If one would like
+to have {\tt ls} {\em always} display even hidden objects in a given environment
+it is necessary to add the argument {\tt all.names=TRUE} to the call.
+By using the {\sf Defaults} package, one can specify outside the function call this
+new default value, so that subsequent calls will now display all
+names.
+
+<<a>>=
+hello<-"visible";.goodbye<-"hidden"
+ls()
+
+library(Defaults)
+setDefaults('ls',all.names=TRUE)
+
+ls()
+
+ls(all.names=FALSE)
+unDefaults(ls)
+ls()
+@
+
+\noindent
+After loading the {\sf Defaults} library, a call to
+{\tt setDefaults('ls',all.names=TRUE)} is made. This
+creates an entry in the standard {\sf options} list, with
+the name {\tt ls.Default}, attaching the value all.names=TRUE
+to this entry.
+
+\vspace{3mm}
+\noindent
+At this point the original function {\tt ls} is unable to
+process this new user specified default. {\tt setDefaults} then
+calls
+{\tt useDefaults(ls)} internally, and a change is then made 
+to {\tt ls} internally,
+with the important difference being that now this
+new version {\em can} process the new defaults. The original 
+function is modified in its original environment to allow the {\sf Defaults}
+functionality to be used. 
+
+\vspace{3mm}
+\noindent
+Internally, the function first looks to see if
+any arguments have been specified in the actual
+function call, as these take precedence over {\em any}
+default - formal or set via {\tt setDefaults}. If no
+value is given in the call, the global defaults, if any,
+are checked.  If nothing is still set, the process falls
+back to the original formal defaults, if any, and continues
+executing. A more detailed account of the exact
+changes made and how everything works
+is describe later in this document.
+
+\vspace{3mm}
+\noindent
+At present it is {\em NOT} possible to set an
+argument's value to {\tt NULL} using {\tt setDefaults}.
+Values that cannot be set via {\tt setDefaults} may
+of course still be specified in the function call.
+
+\vspace{3mm}
+\noindent
+To remove a specific default argument, simply set it to NULL
+within a call to {\tt setDefaults}.
+
+\vspace{3mm}
+\noindent
+The set defaults can be viewed with {\tt getDefaults}, and unset with
+a call to {\tt unsetDefaults}.  The former, when called with no
+arguments, will return a character vector of all functions currently
+having defaults {\em set} for use with {\sf Defaults}, though these will
+not {\em necessarily} be currently set to use Defaults (i.e. a call would
+still need to be made to {\tt useDefaults} to enable Defaults functionality
+in situations where a user call to {\tt unDefaults} had removed it).
+{\tt unsetDefaults} also removes {\sf Defaults} functionality, by calling
+{\tt unDefaults} internally.
+
+<<b>>=
+getDefaults(ls)
+getDefaults()
+unsetDefaults(ls,confirm=FALSE)
+@
+
+\vspace{2mm}
+\noindent
+Since using Defaults as an end user is so easy,
+it only makes sense that making use of them as a
+developer would be just as straighforward. It's even easier.
+
+\section{The Developer: using {\tt importDefaults}}
+Without the {\sf Defaults} package, if one is to use
+a mechanism to access globally specified defaults, designed
+specifically for a new function, it would require
+a complete lookup facility, as well as a series of {\tt if-else}
+blocks.  With {\sf Defaults} all that is required is one function
+placed at the beginning of your function. Or for the truly lazy
+developer, no change at all -- as the end user can always add
+this functionality (see {\bf The End User}).
+
+<<c>>=
+fun <- function(x=5,y=5) {
+importDefaults("fun")
+x * y
+}
+fun()
+fun(x=1:5)
+@
+
+\vspace{2mm}
+\noindent
+{\tt importDefaults("fun")} places all {\it non}-NULL default
+arguments specified by an earlier call to 
+{\tt setDefaults} into the current function's environment.
+The only exception would be if the argument had been specified
+in the function call itself, at which point the value or values
+in question would {\em NOT} be loaded into the current scope.
+In other words, if you explicitly specify an argument value in
+the function call, {\em that} is the value that will be
+used by the function.
+
+<<d>>=
+setDefaults(fun,x=8,y=2)
+fun()
+fun(9)
+fun(y=0.5)
+unsetDefaults(fun,confirm=FALSE)
+fun()
+@
+
+\section{How it works internally}
+A little background on just how this all works, for those who
+care to know the details. 
+
+\vspace{2mm}
+\noindent
+\subsection{Where defaults are stored}
+All options set via {\tt setDefaults}
+are store in the standard {\sf R} {\tt options} list, using
+a special naming convention of appending {\tt .Default} to the
+function in question. This also means that values are lost
+from one session to another, which is designed to prevent
+unintentional overrides in subsequent sessions.
+
+\vspace{2mm}
+\noindent
+\subsection{How functions gain access}
+Calling {\tt setDefaults} (which calls {\tt useDefaults} internally)
+on a function magically changes
+the function to handle your previously specified defaults.
+Actually, there isn't much magic. {\tt useDefaults} modifies the
+function in question (actually the first instance of said function
+in its search path), by inserting at the start of the function
+a call to {\tt importDefaults}. The function is modified {\sf in-place}
+to allow for namespaces to resolve correctly, as well as to prevent
+workspace clutter and assure reversion to its original state
+in subsequent {\sf R} sessions. The gory details of
+this process can be viewed in the source, and have been greatly influenced
+by comments from John Chambers \cite{chambers} and the source code of {\tt trace} \cite{trace}
+and Mark Bravington's {\tt mtrace} from his debug \cite{debug} package. 
+ 
+
+
+\section{Conclusion}
+Using {\sf Defaults}, whether as an end user or package developer,
+greatly simplifies the process of utilizing externally set global
+defaults. With a small set of functions, users can create and use
+default arguments in place of formal ones, as well as create
+defaults where none normally exist, all without relying on the underlying
+function's own methods for handling defaults. Future development
+may include the ability to use {\tt NULL} as a legal default for
+the rare occasion that it is desired, as well as a better method of
+handling subsequent function calls within the visible parent function,
+as is the case with {\tt S3}-style method dispatch on non-visible methods.
+
+\begin{thebibliography}{99}
+\bibitem{debug} Mark V. Bravington:
+\emph{debug: MVB's debugger for R},
+R package version 1.1.0, 2005 
+\bibitem{chambers} John M. Chambers:
+\emph{Personal Communication},
+useR! 2007, 9 August, 2007
+\bibitem{trace} R Development Core Team:
+\emph{R: A Language and Environment for Statistical Computing},
+R Foundation for Statistical Computing, Vienna, Austria.
+ISBN 3-900051-07-0, URL http://www.R-project.org
+\bibitem{p} Jeffrey A. Ryan:
+\emph{Defaults: Create Global Function Defaults},
+R package version 1.1-0, 2007
+\end{thebibliography}
+\end{document}

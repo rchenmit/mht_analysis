@@ -5,6 +5,7 @@
 from __future__ import print_function
 output_file = '../analysis_output/newdata_analyzeBP_BP_MHTSTRATEGY.out'
 fstream = open(output_file, 'a')
+pickle_dir  = '../analysis_output/pickle'
 
 print("running newdata_analyzeBP_BP_MHTSTRATEGY.py")
 ## analyze recorded BP status: using MHT_strategy.txt (physician reported)######################################################################################
@@ -241,22 +242,22 @@ for dz in d_other_diag_pt_level_clinician:
 
 fstream.close()
 #pickle
-with open(r"d_bp_clinician.pickle", "wb") as output_file:
+with open(pickle_dir + "d_bp_clinician.pickle", "wb") as output_file:
     pickle.dump(d_bp_clinician, output_file)
 output_file.close()
 
-with open(r"d_bp_status_pt_level_clinician.pickle", "wb") as output_file:
+with open(pickle_dir + "d_bp_status_pt_level_clinician.pickle", "wb") as output_file:
     pickle.dump(d_bp_status_pt_level_clinician, output_file)
 output_file.close()
 
-with open(r"d_other_diag_clinician_binary.pickle", "wb") as output_file:
+with open(pickle_dir + "d_other_diag_clinician_binary.pickle", "wb") as output_file:
     pickle.dump(d_other_diag_clinician_binary, output_file)
 output_file.close()
 
-with open(r"d_other_diag_clinician.pickle", "wb") as output_file:
+with open(pickle_dir + "d_other_diag_clinician.pickle", "wb") as output_file:
     pickle.dump(d_other_diag_clinician, output_file)
 output_file.close()
 
-with open(r"d_other_diag_pt_level_clinician.pickle", "wb") as output_file:
+with open(pickle_dir + "d_other_diag_pt_level_clinician.pickle", "wb") as output_file:
     pickle.dump(d_other_diag_pt_level_clinician, output_file)
 output_file.close()
