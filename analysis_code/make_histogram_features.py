@@ -99,7 +99,7 @@ plt.close()
 
 #histogram of change in BP: 
 fig = plt.figure(2)
-fig.set_size_inches(20,8)
+fig.set_size_inches(20,6)
 plt.subplot(131)
 data = df_BPSTATUS_Phenotype_BMI_ECG_EGFR_BPCHANGE[isnan(df_BPSTATUS_Phenotype_BMI_ECG_EGFR_BPCHANGE['MEDIAN_SYSTOLIC_CHANGE'])==False]['MEDIAN_SYSTOLIC_CHANGE']
 plt.hist(data , bins=100)
