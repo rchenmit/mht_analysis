@@ -1,0 +1,118 @@
+
+R version 3.1.0 (2014-04-10) -- "Spring Dance"
+Copyright (C) 2014 The R Foundation for Statistical Computing
+Platform: x86_64-apple-darwin13.1.0 (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+[Previously saved workspace restored]
+
+> ##
+> ## R CMD BATCH --slave stepwiseRegression.R
+> 
+> #wideScreen() #wide screen view
+> 
+> input_file = '../../../data/new_data_20140416/Data_curated_RC/df_BPSTATUS_Phenotype_BMI_ECG_EGFR_BPCHANGE.csv'
+> 
+> data <- read.table(input_file, header = T, sep=',')
+> 
+> test <- sample(1:202,150,replace=FALSE)
+> 
+> 
+> data0 <- with(data, data.frame(MEDIAN_MAP_CHANGE = MEDIAN_MAP_CHANGE,
++       	 	    		MEDIAN_SYSTOLIC_CHANGE=MEDIAN_SYSTOLIC_CHANGE, 
++ 				MEDIAN_DIASTOLIC_CHANGE=MEDIAN_DIASTOLIC_CHANGE, 
++ 				SEX = SEX, ETHNICITY = ETHNICITY, RACE= RACE, 
++ 				AGE_ENGAGE=AGE_ENGAGE, AVG_BMI=AVG_BMI, 
++ 				change_BMI=change_BMI,MEAN_EGFR, change_EGFR ))
+> 
+> #change sex to binary numbers
+> data0['SEX'] = sapply(data0['SEX'],function(x) gsub("F",as.integer(0),x))
+> data0['SEX'] = sapply(data0['SEX'],function(x) gsub("M",as.integer(1),x))
+> 
+> #transform to numeric
+> data0 = transform(data0, SEX = as.numeric(SEX),
++ 		 ETHNICITY = as.numeric(ETHNICITY),
++ 		 RACE = as.numeric(RACE),
++ 		 AGE_ENGAGE = as.numeric(AGE_ENGAGE),
++ 		 AVG_BMI = as.numeric(AVG_BMI),
++ 		 change_BMI = as.numeric(change_BMI),
++ 		 MEAN_EGFR = as.numeric(MEAN_EGFR),
++ 		 change_EGFR = as.numeric(change_EGFR)
++ 		      )	     
+> 
+> #scale data
+> data0 <- as.data.frame(scale(data0))
+> data0_removeMissing <- na.omit(data0)      
+> 
+> #model
+> model0 <- lm(MEDIAN_SYSTOLIC_CHANGE~1, data0_removeMissing)
+> model1 <- update(model0, MEDIAN_SYSTOLIC_CHANGE ~ SEX + ETHNICITY + RACE + AGE_ENGAGE + AVG_BMI + change_BMI + MEAN_EGFR + change_EGFR)
+> (f <- as.formula(paste("~", paste(names(coef(model1))[-1], collapse="+"))))
+~SEX + ETHNICITY + RACE + AGE_ENGAGE + AVG_BMI + change_BMI + 
+    MEAN_EGFR + change_EGFR
+> print( step(model0, scope=list(lower=~1, upper=f), direction="forward")  )
+Start:  AIC=80.13
+MEDIAN_SYSTOLIC_CHANGE ~ 1
+
+              Df Sum of Sq    RSS    AIC
++ change_EGFR  1   11.9239 4979.8 70.380
++ AGE_ENGAGE   1    6.4626 4985.3 75.765
++ MEAN_EGFR    1    2.7498 4989.0 79.423
+<none>                     4991.8 80.130
++ change_BMI   1    0.6525 4991.1 81.488
++ ETHNICITY    1    0.2275 4991.5 81.906
++ SEX          1    0.0086 4991.7 82.122
++ RACE         1    0.0078 4991.7 82.122
++ AVG_BMI      1    0.0016 4991.8 82.129
+
+Step:  AIC=70.38
+MEDIAN_SYSTOLIC_CHANGE ~ change_EGFR
+
+             Df Sum of Sq    RSS    AIC
++ AGE_ENGAGE  1    6.4582 4973.4 66.005
+<none>                    4979.8 70.380
++ change_BMI  1    0.6022 4979.2 71.786
++ ETHNICITY   1    0.2878 4979.5 72.096
++ MEAN_EGFR   1    0.2328 4979.6 72.151
++ SEX         1    0.0069 4979.8 72.374
++ AVG_BMI     1    0.0058 4979.8 72.375
++ RACE        1    0.0043 4979.8 72.376
+
+Step:  AIC=66
+MEDIAN_SYSTOLIC_CHANGE ~ change_EGFR + AGE_ENGAGE
+
+             Df Sum of Sq    RSS    AIC
+<none>                    4973.4 66.005
++ MEAN_EGFR   1   0.59709 4972.8 67.415
++ change_BMI  1   0.55805 4972.8 67.453
++ ETHNICITY   1   0.23931 4973.1 67.768
++ RACE        1   0.08690 4973.3 67.919
++ AVG_BMI     1   0.00344 4973.4 68.001
++ SEX         1   0.00188 4973.4 68.003
+
+Call:
+lm(formula = MEDIAN_SYSTOLIC_CHANGE ~ change_EGFR + AGE_ENGAGE, 
+    data = data0_removeMissing)
+
+Coefficients:
+(Intercept)  change_EGFR   AGE_ENGAGE  
+   0.005111     0.048090     0.038153  
+
+> 
+> 
+> proc.time()
+   user  system elapsed 
+  0.939   0.046   0.976 

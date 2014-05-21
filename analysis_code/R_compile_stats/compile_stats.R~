@@ -1,0 +1,6 @@
+f=function(x){
+    x<-as.numeric(as.character(x)) #first convert each column into numeric if it is from factor
+    x[is.na(x)] =median(x, na.rm=TRUE) #convert the item with NA to median value from the column
+    x #display the column
+}
+ss=data.frame(apply(data,2,f))

@@ -1,0 +1,51 @@
+> model0 <- lm(MEDIAN_MAP_CHANGE~1, data0_removeMissing)                                                                                                                                                                                                                             
+> model1 <- update(model0, MEDIAN_MAP_CHANGE ~ SEX + ETHNICITY + RACE + AGE_ENGAGE + AVG_BMI + change_BMI + MEAN_EGFR + change_EGFR)                                                                                                                                                 
+> (f <- as.formula(paste("~", paste(names(coef(model1))[-1], collapse="+"))))                                                                                                                                                                                                        
+~SEX + ETHNICITY + RACE + AGE_ENGAGE + AVG_BMI + change_BMI + 
+    MEAN_EGFR + change_EGFR
+> step(model0, scope=list(lower=~1, upper=f), direction="forward")                                                                                                                                                                                                                   
+Start:  AIC=-236.88
+MEDIAN_MAP_CHANGE ~ 1
+
+              Df Sum of Sq    RSS     AIC
++ change_EGFR  1   13.5923 4666.2 -249.17
++ AGE_ENGAGE   1    4.9137 4674.9 -240.04
+<none>                     4679.8 -236.88
++ MEAN_EGFR    1    1.7756 4678.1 -236.75
++ change_BMI   1    1.4342 4678.4 -236.39
++ RACE         1    0.8253 4679.0 -235.75
++ SEX          1    0.5976 4679.2 -235.51
++ ETHNICITY    1    0.0078 4679.8 -234.89
++ AVG_BMI      1    0.0015 4679.8 -234.88
+
+Step:  AIC=-249.17
+MEDIAN_MAP_CHANGE ~ change_EGFR
+
+             Df Sum of Sq    RSS     AIC
++ AGE_ENGAGE  1    4.9095 4661.3 -252.35
+<none>                    4666.2 -249.17
++ change_BMI  1    1.3540 4664.9 -248.60
++ RACE        1    0.7813 4665.5 -248.00
++ SEX         1    0.6138 4665.6 -247.82
++ MEAN_EGFR   1    0.0023 4666.2 -247.18
++ ETHNICITY   1    0.0006 4666.2 -247.18
++ AVG_BMI     1    0.0000 4666.2 -247.17
+
+Step:  AIC=-252.35
+MEDIAN_MAP_CHANGE ~ change_EGFR + AGE_ENGAGE
+
+             Df Sum of Sq    RSS     AIC
+<none>                    4661.3 -252.35
++ change_BMI  1   1.29596 4660.0 -251.71
++ MEAN_EGFR   1   1.19623 4660.1 -251.61
++ SEX         1   0.80071 4660.5 -251.19
++ RACE        1   0.33420 4661.0 -250.70
++ ETHNICITY   1   0.00441 4661.3 -250.35
++ AVG_BMI     1   0.00024 4661.3 -250.35
+
+Call:
+lm(formula = MEDIAN_MAP_CHANGE ~ change_EGFR + AGE_ENGAGE, data = data0_removeMissing)
+
+Coefficients:
+(Intercept)  change_EGFR   AGE_ENGAGE  
+ -0.0005241    0.0513462    0.0332652  
