@@ -5,7 +5,7 @@
 from __future__ import print_function
 output_file = '../analysis_output/newdata_analyzeBP_BP_MHTSTRATEGY.out'
 fstream = open(output_file, 'a')
-pickle_dir  = '../analysis_output/pickle'
+pickle_dir  = '../analysis_output/pickle/'
 
 print("running newdata_analyzeBP_BP_MHTSTRATEGY.py")
 ## analyze recorded BP status: using MHT_strategy.txt (physician reported)######################################################################################

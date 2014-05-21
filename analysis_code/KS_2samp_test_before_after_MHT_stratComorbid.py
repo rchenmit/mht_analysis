@@ -21,9 +21,9 @@ for dz in d_other_diag_pt_level_clinician:
     data_BP_stratComorbid[dz] = dict()
 
 for dz in data_BP_stratComorbid:
-    d_bp_before_after_MHT = dict()
-    d_bp_before_after_MHT['BEFORE'] = dict()
-    d_bp_before_after_MHT['AFTER'] = dict()
+    d_bp_before_after_MHT_thisComorbid = dict()
+    d_bp_before_after_MHT_thisComorbid['BEFORE'] = dict()
+    d_bp_before_after_MHT_thisComorbid['AFTER'] = dict()
     d_kstest_before_after_MHT = dict()
     d_kstest_before_after_MHT['MAP'] = dict()
     d_kstest_before_after_MHT['SYSTOLIC'] = dict()
@@ -59,23 +59,23 @@ for dz in data_BP_stratComorbid:
             l_this_pt_DIASTOLIC_before = list(df_bp_this_pt.loc[condition_before_time_window]['DIASTOLIC'])
             l_this_pt_DIASTOLIC_after =  list(df_bp_this_pt.loc[df_bp_this_pt.index.date > date_mht_engage_date]['DIASTOLIC'])#
     
-            d_bp_before_after_MHT['BEFORE'][key] = dict()
-            d_bp_before_after_MHT['AFTER'][key] = dict()
-            d_bp_before_after_MHT['BEFORE'][key]['SYSTOLIC'] = median_systolic_before
-            d_bp_before_after_MHT['BEFORE'][key]['DIASTOLIC'] = median_diastolic_before
-            d_bp_before_after_MHT['BEFORE'][key]['MAP'] = median_MAP_before
-            d_bp_before_after_MHT['AFTER'][key]['SYSTOLIC'] = median_systolic_after
-            d_bp_before_after_MHT['AFTER'][key]['DIASTOLIC'] = median_diastolic_after
-            d_bp_before_after_MHT['AFTER'][key]['MAP'] = median_MAP_after
+            d_bp_before_after_MHT_thisComorbid['BEFORE'][key] = dict()
+            d_bp_before_after_MHT_thisComorbid['AFTER'][key] = dict()
+            d_bp_before_after_MHT_thisComorbid['BEFORE'][key]['SYSTOLIC'] = median_systolic_before
+            d_bp_before_after_MHT_thisComorbid['BEFORE'][key]['DIASTOLIC'] = median_diastolic_before
+            d_bp_before_after_MHT_thisComorbid['BEFORE'][key]['MAP'] = median_MAP_before
+            d_bp_before_after_MHT_thisComorbid['AFTER'][key]['SYSTOLIC'] = median_systolic_after
+            d_bp_before_after_MHT_thisComorbid['AFTER'][key]['DIASTOLIC'] = median_diastolic_after
+            d_bp_before_after_MHT_thisComorbid['AFTER'][key]['MAP'] = median_MAP_after
 
-            d_bp_before_after_MHT['AFTER'][key]['MAP_list'] = l_this_pt_MAP_after
-            d_bp_before_after_MHT['AFTER'][key]['SYSTOLIC_list'] = l_this_pt_SYSTOLIC_after
-            d_bp_before_after_MHT['AFTER'][key]['DIASTOLIC_list'] = l_this_pt_DIASTOLIC_after
-            d_bp_before_after_MHT['BEFORE'][key]['MAP_list'] = l_this_pt_MAP_before
-            d_bp_before_after_MHT['BEFORE'][key]['SYSTOLIC_list'] = l_this_pt_SYSTOLIC_before
-            d_bp_before_after_MHT['BEFORE'][key]['DIASTOLIC_list'] = l_this_pt_DIASTOLIC_before
+            d_bp_before_after_MHT_thisComorbid['AFTER'][key]['MAP_list'] = l_this_pt_MAP_after
+            d_bp_before_after_MHT_thisComorbid['AFTER'][key]['SYSTOLIC_list'] = l_this_pt_SYSTOLIC_after
+            d_bp_before_after_MHT_thisComorbid['AFTER'][key]['DIASTOLIC_list'] = l_this_pt_DIASTOLIC_after
+            d_bp_before_after_MHT_thisComorbid['BEFORE'][key]['MAP_list'] = l_this_pt_MAP_before
+            d_bp_before_after_MHT_thisComorbid['BEFORE'][key]['SYSTOLIC_list'] = l_this_pt_SYSTOLIC_before
+            d_bp_before_after_MHT_thisComorbid['BEFORE'][key]['DIASTOLIC_list'] = l_this_pt_DIASTOLIC_before
 
-    data_BP_stratComorbid[dz]['d_bp_before_after_MHT'] =  d_bp_before_after_MHT    
+    data_BP_stratComorbid[dz]['d_bp_before_after_MHT'] =  d_bp_before_after_MHT_thisComorbid
 ###### make lists of before/after MAP's
     l_MAP_before_IC = []
     l_MAP_after_IC = []
@@ -104,51 +104,51 @@ for dz in data_BP_stratComorbid:
     l_pt_ruid_CLINICIAN_OUT_CONTROL = d_this_dz_OUT.keys()
     for ruid in l_pt_ruid_CLINICIAN_IN_CONTROL:
         #make sure that every patient analyzed has MAP and SBP and DBP all recorded!
-        if (ruid in d_bp_before_after_MHT['BEFORE'] and
-            not np.isnan(d_bp_before_after_MHT['BEFORE'][ruid]['MAP']) and
-            not np.isnan(d_bp_before_after_MHT['AFTER'][ruid]['MAP']) and
-            not np.isnan(d_bp_before_after_MHT['BEFORE'][ruid]['SYSTOLIC']) and
-            not np.isnan(d_bp_before_after_MHT['AFTER'][ruid]['SYSTOLIC']) and
-            not np.isnan(d_bp_before_after_MHT['BEFORE'][ruid]['DIASTOLIC']) and
-            not np.isnan(d_bp_before_after_MHT['AFTER'][ruid]['DIASTOLIC'])  ):
-            l_MAP_before_IC.append(d_bp_before_after_MHT['BEFORE'][ruid]['MAP'])
-            l_MAP_after_IC.append(d_bp_before_after_MHT['AFTER'][ruid]['MAP'])
-            l_SYSTOLIC_before_IC.append(d_bp_before_after_MHT['BEFORE'][ruid]['SYSTOLIC'])
-            l_SYSTOLIC_after_IC.append(d_bp_before_after_MHT['AFTER'][ruid]['SYSTOLIC'])
-            l_DIASTOLIC_before_IC.append(d_bp_before_after_MHT['BEFORE'][ruid]['DIASTOLIC'])
-            l_DIASTOLIC_after_IC.append(d_bp_before_after_MHT['AFTER'][ruid]['DIASTOLIC'])
+        if (ruid in d_bp_before_after_MHT_thisComorbid['BEFORE'] and
+            not np.isnan(d_bp_before_after_MHT_thisComorbid['BEFORE'][ruid]['MAP']) and
+            not np.isnan(d_bp_before_after_MHT_thisComorbid['AFTER'][ruid]['MAP']) and
+            not np.isnan(d_bp_before_after_MHT_thisComorbid['BEFORE'][ruid]['SYSTOLIC']) and
+            not np.isnan(d_bp_before_after_MHT_thisComorbid['AFTER'][ruid]['SYSTOLIC']) and
+            not np.isnan(d_bp_before_after_MHT_thisComorbid['BEFORE'][ruid]['DIASTOLIC']) and
+            not np.isnan(d_bp_before_after_MHT_thisComorbid['AFTER'][ruid]['DIASTOLIC'])  ):
+            l_MAP_before_IC.append(d_bp_before_after_MHT_thisComorbid['BEFORE'][ruid]['MAP'])
+            l_MAP_after_IC.append(d_bp_before_after_MHT_thisComorbid['AFTER'][ruid]['MAP'])
+            l_SYSTOLIC_before_IC.append(d_bp_before_after_MHT_thisComorbid['BEFORE'][ruid]['SYSTOLIC'])
+            l_SYSTOLIC_after_IC.append(d_bp_before_after_MHT_thisComorbid['AFTER'][ruid]['SYSTOLIC'])
+            l_DIASTOLIC_before_IC.append(d_bp_before_after_MHT_thisComorbid['BEFORE'][ruid]['DIASTOLIC'])
+            l_DIASTOLIC_after_IC.append(d_bp_before_after_MHT_thisComorbid['AFTER'][ruid]['DIASTOLIC'])
             l_status_for_MAP_comparison_IC.append(1)
-            l_MAP_before_this_pt = d_bp_before_after_MHT['BEFORE'][ruid]['MAP_list'];
-            l_MAP_after_this_pt = d_bp_before_after_MHT['AFTER'][ruid]['MAP_list']
-            l_SBP_before_this_pt = d_bp_before_after_MHT['BEFORE'][ruid]['SYSTOLIC_list'];
-            l_SBP_after_this_pt = d_bp_before_after_MHT['AFTER'][ruid]['SYSTOLIC_list']
-            l_DBP_before_this_pt = d_bp_before_after_MHT['BEFORE'][ruid]['DIASTOLIC_list'];
-            l_DBP_after_this_pt = d_bp_before_after_MHT['AFTER'][ruid]['DIASTOLIC_list']
+            l_MAP_before_this_pt = d_bp_before_after_MHT_thisComorbid['BEFORE'][ruid]['MAP_list'];
+            l_MAP_after_this_pt = d_bp_before_after_MHT_thisComorbid['AFTER'][ruid]['MAP_list']
+            l_SBP_before_this_pt = d_bp_before_after_MHT_thisComorbid['BEFORE'][ruid]['SYSTOLIC_list'];
+            l_SBP_after_this_pt = d_bp_before_after_MHT_thisComorbid['AFTER'][ruid]['SYSTOLIC_list']
+            l_DBP_before_this_pt = d_bp_before_after_MHT_thisComorbid['BEFORE'][ruid]['DIASTOLIC_list'];
+            l_DBP_after_this_pt = d_bp_before_after_MHT_thisComorbid['AFTER'][ruid]['DIASTOLIC_list']
             ks_MAP_IC = np.append(ks_MAP_IC, ks_2samp(l_MAP_before_this_pt, l_MAP_after_this_pt))
             ks_SBP_IC = np.append(ks_SBP_IC, ks_2samp(l_SBP_before_this_pt, l_SBP_after_this_pt))
             ks_DBP_IC = np.append(ks_DBP_IC, ks_2samp(l_DBP_before_this_pt, l_DBP_after_this_pt))
 
     for ruid in l_pt_ruid_CLINICIAN_OUT_CONTROL:
-        if(ruid in d_bp_before_after_MHT['BEFORE'] and
-            not np.isnan(d_bp_before_after_MHT['BEFORE'][ruid]['MAP']) and
-            not np.isnan(d_bp_before_after_MHT['AFTER'][ruid]['MAP']) and
-            not np.isnan(d_bp_before_after_MHT['BEFORE'][ruid]['SYSTOLIC']) and
-            not np.isnan(d_bp_before_after_MHT['AFTER'][ruid]['SYSTOLIC']) and
-            not np.isnan(d_bp_before_after_MHT['BEFORE'][ruid]['DIASTOLIC']) and
-            not np.isnan(d_bp_before_after_MHT['AFTER'][ruid]['DIASTOLIC']) ):
-            l_MAP_before_OOC.append(d_bp_before_after_MHT['BEFORE'][ruid]['MAP'])
-            l_MAP_after_OOC.append(d_bp_before_after_MHT['AFTER'][ruid]['MAP'])
-            l_SYSTOLIC_before_OOC.append(d_bp_before_after_MHT['BEFORE'][ruid]['SYSTOLIC'])
-            l_SYSTOLIC_after_OOC.append(d_bp_before_after_MHT['AFTER'][ruid]['SYSTOLIC'])
-            l_DIASTOLIC_before_OOC.append(d_bp_before_after_MHT['BEFORE'][ruid]['DIASTOLIC'])
-            l_DIASTOLIC_after_OOC.append(d_bp_before_after_MHT['AFTER'][ruid]['DIASTOLIC'])
+        if(ruid in d_bp_before_after_MHT_thisComorbid['BEFORE'] and
+            not np.isnan(d_bp_before_after_MHT_thisComorbid['BEFORE'][ruid]['MAP']) and
+            not np.isnan(d_bp_before_after_MHT_thisComorbid['AFTER'][ruid]['MAP']) and
+            not np.isnan(d_bp_before_after_MHT_thisComorbid['BEFORE'][ruid]['SYSTOLIC']) and
+            not np.isnan(d_bp_before_after_MHT_thisComorbid['AFTER'][ruid]['SYSTOLIC']) and
+            not np.isnan(d_bp_before_after_MHT_thisComorbid['BEFORE'][ruid]['DIASTOLIC']) and
+            not np.isnan(d_bp_before_after_MHT_thisComorbid['AFTER'][ruid]['DIASTOLIC']) ):
+            l_MAP_before_OOC.append(d_bp_before_after_MHT_thisComorbid['BEFORE'][ruid]['MAP'])
+            l_MAP_after_OOC.append(d_bp_before_after_MHT_thisComorbid['AFTER'][ruid]['MAP'])
+            l_SYSTOLIC_before_OOC.append(d_bp_before_after_MHT_thisComorbid['BEFORE'][ruid]['SYSTOLIC'])
+            l_SYSTOLIC_after_OOC.append(d_bp_before_after_MHT_thisComorbid['AFTER'][ruid]['SYSTOLIC'])
+            l_DIASTOLIC_before_OOC.append(d_bp_before_after_MHT_thisComorbid['BEFORE'][ruid]['DIASTOLIC'])
+            l_DIASTOLIC_after_OOC.append(d_bp_before_after_MHT_thisComorbid['AFTER'][ruid]['DIASTOLIC'])
             l_status_for_MAP_comparison_OOC.append(-1)
-            l_MAP_before_this_pt = d_bp_before_after_MHT['BEFORE'][ruid]['MAP_list'];
-            l_MAP_after_this_pt = d_bp_before_after_MHT['AFTER'][ruid]['MAP_list']
-            l_SBP_before_this_pt = d_bp_before_after_MHT['BEFORE'][ruid]['SYSTOLIC_list'];
-            l_SBP_after_this_pt = d_bp_before_after_MHT['AFTER'][ruid]['SYSTOLIC_list']
-            l_DBP_before_this_pt = d_bp_before_after_MHT['BEFORE'][ruid]['DIASTOLIC_list'];
-            l_DBP_after_this_pt = d_bp_before_after_MHT['AFTER'][ruid]['DIASTOLIC_list']
+            l_MAP_before_this_pt = d_bp_before_after_MHT_thisComorbid['BEFORE'][ruid]['MAP_list'];
+            l_MAP_after_this_pt = d_bp_before_after_MHT_thisComorbid['AFTER'][ruid]['MAP_list']
+            l_SBP_before_this_pt = d_bp_before_after_MHT_thisComorbid['BEFORE'][ruid]['SYSTOLIC_list'];
+            l_SBP_after_this_pt = d_bp_before_after_MHT_thisComorbid['AFTER'][ruid]['SYSTOLIC_list']
+            l_DBP_before_this_pt = d_bp_before_after_MHT_thisComorbid['BEFORE'][ruid]['DIASTOLIC_list'];
+            l_DBP_after_this_pt = d_bp_before_after_MHT_thisComorbid['AFTER'][ruid]['DIASTOLIC_list']
             ks_MAP_OOC = np.append(ks_MAP_OOC, ks_2samp(l_MAP_before_this_pt, l_MAP_after_this_pt))
             ks_SBP_OOC = np.append(ks_SBP_OOC, ks_2samp(l_SBP_before_this_pt, l_SBP_after_this_pt))
             ks_DBP_OOC = np.append(ks_DBP_OOC, ks_2samp(l_DBP_before_this_pt, l_DBP_after_this_pt))
