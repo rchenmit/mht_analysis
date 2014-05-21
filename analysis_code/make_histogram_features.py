@@ -101,19 +101,19 @@ plt.close()
 fig = plt.figure(2)
 fig.set_size_inches(20,8)
 plt.subplot(131)
-data = df_BPSTATUS_Phenotype_BMI_ECG_EGFR_BPCHANGE['MEDIAN_SYSTOLIC_CHANGE']
+data = df_BPSTATUS_Phenotype_BMI_ECG_EGFR_BPCHANGE[isnan(df_BPSTATUS_Phenotype_BMI_ECG_EGFR_BPCHANGE['MEDIAN_SYSTOLIC_CHANGE'])==False]['MEDIAN_SYSTOLIC_CHANGE']
 plt.hist(data , bins=100)
 plt.xlabel('change in systolic pressure')
 plt.ylabel('#')
 plt.title('Systolic BP, n='+ str(len(data)))
 plt.subplot(132)
-data = df_BPSTATUS_Phenotype_BMI_ECG_EGFR_BPCHANGE['MEDIAN_DIASTOLIC_CHANGE']
+data = df_BPSTATUS_Phenotype_BMI_ECG_EGFR_BPCHANGE[isnan(df_BPSTATUS_Phenotype_BMI_ECG_EGFR_BPCHANGE['MEDIAN_DIASTOLIC_CHANGE'])==False]['MEDIAN_DIASTOLIC_CHANGE']
 plt.hist(data, bins = 100)
 plt.xlabel('change in diastolic pressure')
 plt.ylabel('#')
 plt.title('Diastolic BP, n=' + str(len(data)))
 plt.subplot(133)
-data =  df_BPSTATUS_Phenotype_BMI_ECG_EGFR_BPCHANGE['MEDIAN_MAP_CHANGE']
+data =  df_BPSTATUS_Phenotype_BMI_ECG_EGFR_BPCHANGE[isnan(df_BPSTATUS_Phenotype_BMI_ECG_EGFR_BPCHANGE['MEDIAN_MAP_CHANGE'])==False]['MEDIAN_MAP_CHANGE']
 plt.hist( data , bins = 100)
 plt.xlabel('change in MAP')
 plt.ylabel('#')
