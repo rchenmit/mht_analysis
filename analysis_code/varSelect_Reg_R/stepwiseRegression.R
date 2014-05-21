@@ -5,7 +5,7 @@
 
 input_file = '../../../data/new_data_20140416/Data_curated_RC/df_BPSTATUS_Phenotype_BMI_ECG_EGFR_BPCHANGE.csv'
 
-data <- read.table(input_file, header = T, sep=',')
+Data <- read.table(input_file, header = T, sep=',')
 
 test <- sample(1:202,150,replace=FALSE)
 

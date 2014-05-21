@@ -5,3 +5,10 @@ dm
 Counter({1: 945, -1: 652, 0: 115})
 chf
 Counter({1: 208, -1: 67, 0: 15})
+number patients with each control class (from clinician assessment): 
+Counter({1: 4046, -1: 2241, 0: 258})
+number patients with each control status for OTHER disease (from clinician assessment): 
+dm
+Counter({1: 945, -1: 652, 0: 115})
+chf
+Counter({1: 208, -1: 67, 0: 15})
