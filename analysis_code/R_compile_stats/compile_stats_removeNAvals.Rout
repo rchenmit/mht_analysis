@@ -1,0 +1,387 @@
+
+R version 3.1.0 (2014-04-10) -- "Spring Dance"
+Copyright (C) 2014 The R Foundation for Statistical Computing
+Platform: x86_64-apple-darwin13.1.0 (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+[Previously saved workspace restored]
+
+> library(matrixStats) #need this for colSds() function
+matrixStats v0.8.14 (2013-11-23) successfully loaded. See ?matrixStats for help.
+> library(foreach) #need this for foreach loop
+> 
+> ## compiling status 
+> 
+> ## input data
+> input_file = '../../../data/new_data_20140416/Data_curated_RC/df_BPSTATUS_Phenotype_BMI_ECG_EGFR_BPCHANGE.csv'
+> 
+> ## read data
+> data_raw <- read.table(input_file, header = T, sep=',')
+> #remove missing data for ANY of the BP measurements
+> data <- subset( data_raw, !(is.na(MEDIAN_SYSTOLIC_BEFORE) | is.na(MEDIAN_SYSTOLIC_AFTER) | is.na(MEDIAN_DIASTOLIC_BEFORE) | is.na(MEDIAN_DIASTOLIC_AFTER) | is.na(MEDIAN_MAP_BEFORE) | is.na(MEDIAN_MAP_AFTER)  ))
+> print("num patients total, num features total; -- after disregarding patients that dont have BP's BEFORE and AFTER")
+[1] "num patients total, num features total; -- after disregarding patients that dont have BP's BEFORE and AFTER"
+> print(dim(data))
+[1] 6111   43
+> 
+> ## functions
+> fillNAmedian=function(x){
++     x<-as.numeric(as.character(x)) #first convert each column into numeric if it is from factor
++     x[is.na(x)] =median(x, na.rm=TRUE) #convert the item with NA to median value from the column
++     x #display the column
++ }
+> 
+> fillNAmean=function(x){
++     x<-as.numeric(as.character(x)) #first convert each column into numeric if it is from factor
++     x[is.na(x)] =median(x, na.rm=TRUE) #convert the item with NA to median value from the column
++     x #display the column
++ }
+> 
+> ## calculate stuff 
+> data_fill_NA_median = data.frame(apply(data,2,fillNAmedian))
+Warning messages:
+1: In FUN(newX[, i], ...) : NAs introduced by coercion
+2: In FUN(newX[, i], ...) : NAs introduced by coercion
+3: In FUN(newX[, i], ...) : NAs introduced by coercion
+4: In FUN(newX[, i], ...) : NAs introduced by coercion
+5: In FUN(newX[, i], ...) : NAs introduced by coercion
+> data_fill_NA_mean   = data.frame(apply(data,2,fillNAmean))
+Warning messages:
+1: In FUN(newX[, i], ...) : NAs introduced by coercion
+2: In FUN(newX[, i], ...) : NAs introduced by coercion
+3: In FUN(newX[, i], ...) : NAs introduced by coercion
+4: In FUN(newX[, i], ...) : NAs introduced by coercion
+5: In FUN(newX[, i], ...) : NAs introduced by coercion
+> 
+> #data_HTN_IC = subset(data_fill_NA_mean, BP_STATUS==1)
+> #data_HTN_OOC = subset(data_fill_NA_mean, BP_STATUS == -1)
+> #data_DM_IC = subset(data_fill_NA_mean, BP_STATUS == 1 & DM_TX ==1) 
+> #data_DM_OOC = subset(data_fill_NA_mean, BP_STATUS == -1 & DM_TX ==1) 
+> #data_CHF_IC = subset(data_fill_NA_mean, BP_STATUS == 1 & CHF_TX ==1) 
+> #data_CHF_OOC = subset(data_fill_NA_mean, BP_STATUS == -1 & CHF_TX ==1) 
+> 
+> 
+> data_HTN_IC = subset(data, BP_STATUS==1)
+> data_HTN_OOC = subset(data, BP_STATUS == -1)
+> data_DM_IC = subset(data, BP_STATUS == 1 & DM_TX ==1) 
+> data_DM_OOC = subset(data, BP_STATUS == -1 & DM_TX ==1) 
+> data_DM_ALL = subset(data, DM_TX ==1) 
+> data_CHF_IC = subset(data, BP_STATUS == 1 & CHF_TX ==1) 
+> data_CHF_OOC = subset(data, BP_STATUS == -1 & CHF_TX ==1) 
+> data_CHF_ALL = subset(data, CHF_TX ==1) 
+> 
+> ## print the MEANS for for vitals/BP, by disease cluster
+> print("Print MEANS: -----------------------------------------------------------------------------------------------------------------------------------")
+[1] "Print MEANS: -----------------------------------------------------------------------------------------------------------------------------------"
+> print(paste("HTN", "n_IC: ", dim(data_HTN_IC)[1], "n_OOC: ", dim(data_HTN_OOC)[1], "n_ALL: ", dim(data[1])))
+[1] "HTN n_IC:  3818 n_OOC:  2043 n_ALL:  6111"
+[2] "HTN n_IC:  3818 n_OOC:  2043 n_ALL:  1"   
+> print ( colMeans(data_HTN_IC[c('RUID', 'ETHNICITY', 'RACE', 'AVG_BMI', 'MEAN_EGFR', 'change_EGFR', 'MEDIAN_SYSTOLIC_BEFORE', 'MEDIAN_SYSTOLIC_AFTER', 'MEDIAN_SYSTOLIC_CHANGE', 'MEDIAN_DIASTOLIC_BEFORE', 'MEDIAN_DIASTOLIC_AFTER', 'MEDIAN_DIASTOLIC_CHANGE', 'MEDIAN_MAP_BEFORE', 'MEDIAN_MAP_AFTER' , 'MEDIAN_MAP_CHANGE')] , na.rm=T))
+                   RUID               ETHNICITY                    RACE 
+           5.000538e+07            3.724463e-01            2.625066e+00 
+                AVG_BMI               MEAN_EGFR             change_EGFR 
+           5.387435e+01            8.107477e+01           -3.147792e+00 
+ MEDIAN_SYSTOLIC_BEFORE   MEDIAN_SYSTOLIC_AFTER  MEDIAN_SYSTOLIC_CHANGE 
+           1.296198e+02            1.280143e+02           -1.605553e+00 
+MEDIAN_DIASTOLIC_BEFORE  MEDIAN_DIASTOLIC_AFTER MEDIAN_DIASTOLIC_CHANGE 
+           7.477279e+01            7.317837e+01           -1.594421e+00 
+      MEDIAN_MAP_BEFORE        MEDIAN_MAP_AFTER       MEDIAN_MAP_CHANGE 
+           9.312790e+01            9.150895e+01           -1.618954e+00 
+> print ( colMeans(data_HTN_OOC[c('RUID', 'ETHNICITY', 'RACE', 'AVG_BMI', 'MEAN_EGFR', 'change_EGFR', 'MEDIAN_SYSTOLIC_BEFORE', 'MEDIAN_SYSTOLIC_AFTER', 'MEDIAN_SYSTOLIC_CHANGE', 'MEDIAN_DIASTOLIC_BEFORE', 'MEDIAN_DIASTOLIC_AFTER', 'MEDIAN_DIASTOLIC_CHANGE', 'MEDIAN_MAP_BEFORE', 'MEDIAN_MAP_AFTER' , 'MEDIAN_MAP_CHANGE')] , na.rm=T))
+                   RUID               ETHNICITY                    RACE 
+           4.960847e+07            5.893294e-01            2.469408e+00 
+                AVG_BMI               MEAN_EGFR             change_EGFR 
+           5.302725e+01            8.738752e+01           -4.805654e+00 
+ MEDIAN_SYSTOLIC_BEFORE   MEDIAN_SYSTOLIC_AFTER  MEDIAN_SYSTOLIC_CHANGE 
+           1.379902e+02            1.364202e+02           -1.569995e+00 
+MEDIAN_DIASTOLIC_BEFORE  MEDIAN_DIASTOLIC_AFTER MEDIAN_DIASTOLIC_CHANGE 
+           7.988179e+01            7.817107e+01           -1.710720e+00 
+      MEDIAN_MAP_BEFORE        MEDIAN_MAP_AFTER       MEDIAN_MAP_CHANGE 
+           9.929752e+01            9.760222e+01           -1.695301e+00 
+> print ( colMeans(data[c('RUID', 'ETHNICITY', 'RACE', 'AVG_BMI', 'MEAN_EGFR', 'change_EGFR', 'MEDIAN_SYSTOLIC_BEFORE', 'MEDIAN_SYSTOLIC_AFTER', 'MEDIAN_SYSTOLIC_CHANGE', 'MEDIAN_DIASTOLIC_BEFORE', 'MEDIAN_DIASTOLIC_AFTER', 'MEDIAN_DIASTOLIC_CHANGE', 'MEDIAN_MAP_BEFORE', 'MEDIAN_MAP_AFTER' , 'MEDIAN_MAP_CHANGE')] , na.rm=T))
+                   RUID               ETHNICITY                    RACE 
+           4.992602e+07            4.462445e-01            2.567638e+00 
+                AVG_BMI               MEAN_EGFR             change_EGFR 
+           5.408612e+01            8.306883e+01           -3.757317e+00 
+ MEDIAN_SYSTOLIC_BEFORE   MEDIAN_SYSTOLIC_AFTER  MEDIAN_SYSTOLIC_CHANGE 
+           1.326139e+02            1.310210e+02           -1.592865e+00 
+MEDIAN_DIASTOLIC_BEFORE  MEDIAN_DIASTOLIC_AFTER MEDIAN_DIASTOLIC_CHANGE 
+           7.652872e+01            7.487089e+01           -1.657830e+00 
+      MEDIAN_MAP_BEFORE        MEDIAN_MAP_AFTER       MEDIAN_MAP_CHANGE 
+           9.529657e+01            9.362398e+01           -1.672585e+00 
+> 
+> print(paste("DM", "n_IC: ", dim(data_DM_IC)[1], "n_OOC: ", dim(data_DM_OOC)[1], "n_ALL: ", dim(data_DM_ALL[1])))
+[1] "DM n_IC:  901 n_OOC:  625 n_ALL:  1639"
+[2] "DM n_IC:  901 n_OOC:  625 n_ALL:  1"   
+> print ( colMeans(data_DM_IC[c('RUID', 'ETHNICITY', 'RACE', 'AVG_BMI', 'MEAN_EGFR', 'change_EGFR', 'MEDIAN_SYSTOLIC_BEFORE', 'MEDIAN_SYSTOLIC_AFTER', 'MEDIAN_SYSTOLIC_CHANGE', 'MEDIAN_DIASTOLIC_BEFORE', 'MEDIAN_DIASTOLIC_AFTER', 'MEDIAN_DIASTOLIC_CHANGE', 'MEDIAN_MAP_BEFORE', 'MEDIAN_MAP_AFTER' , 'MEDIAN_MAP_CHANGE')] , na.rm=T))
+                   RUID               ETHNICITY                    RACE 
+           5.083386e+07            1.553829e-02            2.503885e+00 
+                AVG_BMI               MEAN_EGFR             change_EGFR 
+           4.384883e+01            7.926752e+01           -3.953863e+00 
+ MEDIAN_SYSTOLIC_BEFORE   MEDIAN_SYSTOLIC_AFTER  MEDIAN_SYSTOLIC_CHANGE 
+           1.296071e+02            1.280022e+02           -1.604883e+00 
+MEDIAN_DIASTOLIC_BEFORE  MEDIAN_DIASTOLIC_AFTER MEDIAN_DIASTOLIC_CHANGE 
+           7.251165e+01            7.076249e+01           -1.749168e+00 
+      MEDIAN_MAP_BEFORE        MEDIAN_MAP_AFTER       MEDIAN_MAP_CHANGE 
+           9.157862e+01            8.994247e+01           -1.636145e+00 
+> print ( colMeans(data_DM_OOC[c('RUID', 'ETHNICITY', 'RACE', 'AVG_BMI', 'MEAN_EGFR', 'change_EGFR', 'MEDIAN_SYSTOLIC_BEFORE', 'MEDIAN_SYSTOLIC_AFTER', 'MEDIAN_SYSTOLIC_CHANGE', 'MEDIAN_DIASTOLIC_BEFORE', 'MEDIAN_DIASTOLIC_AFTER', 'MEDIAN_DIASTOLIC_CHANGE', 'MEDIAN_MAP_BEFORE', 'MEDIAN_MAP_AFTER' , 'MEDIAN_MAP_CHANGE')] , na.rm=T))
+                   RUID               ETHNICITY                    RACE 
+           4.943317e+07            3.264000e-01            2.244800e+00 
+                AVG_BMI               MEAN_EGFR             change_EGFR 
+           6.135105e+01            8.667646e+01           -7.662471e+00 
+ MEDIAN_SYSTOLIC_BEFORE   MEDIAN_SYSTOLIC_AFTER  MEDIAN_SYSTOLIC_CHANGE 
+           1.374504e+02            1.367016e+02           -7.488000e-01 
+MEDIAN_DIASTOLIC_BEFORE  MEDIAN_DIASTOLIC_AFTER MEDIAN_DIASTOLIC_CHANGE 
+           7.706400e+01            7.581840e+01           -1.245600e+00 
+      MEDIAN_MAP_BEFORE        MEDIAN_MAP_AFTER       MEDIAN_MAP_CHANGE 
+           9.718800e+01            9.611493e+01           -1.073067e+00 
+> print ( colMeans(data_DM_ALL[c('RUID', 'ETHNICITY', 'RACE', 'AVG_BMI', 'MEAN_EGFR', 'change_EGFR', 'MEDIAN_SYSTOLIC_BEFORE', 'MEDIAN_SYSTOLIC_AFTER', 'MEDIAN_SYSTOLIC_CHANGE', 'MEDIAN_DIASTOLIC_BEFORE', 'MEDIAN_DIASTOLIC_AFTER', 'MEDIAN_DIASTOLIC_CHANGE', 'MEDIAN_MAP_BEFORE', 'MEDIAN_MAP_AFTER' , 'MEDIAN_MAP_CHANGE')] , na.rm=T))
+                   RUID               ETHNICITY                    RACE 
+           5.036218e+07            1.946309e-01            2.393533e+00 
+                AVG_BMI               MEAN_EGFR             change_EGFR 
+           5.500025e+01            8.205203e+01           -5.541615e+00 
+ MEDIAN_SYSTOLIC_BEFORE   MEDIAN_SYSTOLIC_AFTER  MEDIAN_SYSTOLIC_CHANGE 
+           1.329149e+02            1.316309e+02           -1.284015e+00 
+MEDIAN_DIASTOLIC_BEFORE  MEDIAN_DIASTOLIC_AFTER MEDIAN_DIASTOLIC_CHANGE 
+           7.439811e+01            7.279073e+01           -1.607383e+00 
+      MEDIAN_MAP_BEFORE        MEDIAN_MAP_AFTER       MEDIAN_MAP_CHANGE 
+           9.394122e+01            9.245272e+01           -1.488509e+00 
+> 
+> print(paste("CHF", "n_IC: ", dim(data_CHF_IC)[1], "n_OOC: ", dim(data_CHF_OOC)[1], "n_ALL: ", dim(data_CHF_ALL[1])))
+[1] "CHF n_IC:  202 n_OOC:  67 n_ALL:  284"
+[2] "CHF n_IC:  202 n_OOC:  67 n_ALL:  1"  
+> print ( colMeans(data_CHF_IC[c('RUID', 'ETHNICITY', 'RACE', 'AVG_BMI', 'MEAN_EGFR', 'change_EGFR', 'MEDIAN_SYSTOLIC_BEFORE', 'MEDIAN_SYSTOLIC_AFTER', 'MEDIAN_SYSTOLIC_CHANGE', 'MEDIAN_DIASTOLIC_BEFORE', 'MEDIAN_DIASTOLIC_AFTER', 'MEDIAN_DIASTOLIC_CHANGE', 'MEDIAN_MAP_BEFORE', 'MEDIAN_MAP_AFTER' , 'MEDIAN_MAP_CHANGE')] , na.rm=T))
+                   RUID               ETHNICITY                    RACE 
+           4.836838e+07            9.900990e-03            2.485149e+00 
+                AVG_BMI               MEAN_EGFR             change_EGFR 
+           6.102131e+01            6.783726e+01           -3.644900e+00 
+ MEDIAN_SYSTOLIC_BEFORE   MEDIAN_SYSTOLIC_AFTER  MEDIAN_SYSTOLIC_CHANGE 
+           1.258465e+02            1.256683e+02           -1.782178e-01 
+MEDIAN_DIASTOLIC_BEFORE  MEDIAN_DIASTOLIC_AFTER MEDIAN_DIASTOLIC_CHANGE 
+           6.819307e+01            6.723762e+01           -9.554455e-01 
+      MEDIAN_MAP_BEFORE        MEDIAN_MAP_AFTER       MEDIAN_MAP_CHANGE 
+           8.769802e+01            8.687459e+01           -8.234323e-01 
+> print ( colMeans(data_CHF_OOC[c('RUID', 'ETHNICITY', 'RACE', 'AVG_BMI', 'MEAN_EGFR', 'change_EGFR', 'MEDIAN_SYSTOLIC_BEFORE', 'MEDIAN_SYSTOLIC_AFTER', 'MEDIAN_SYSTOLIC_CHANGE', 'MEDIAN_DIASTOLIC_BEFORE', 'MEDIAN_DIASTOLIC_AFTER', 'MEDIAN_DIASTOLIC_CHANGE', 'MEDIAN_MAP_BEFORE', 'MEDIAN_MAP_AFTER' , 'MEDIAN_MAP_CHANGE')] , na.rm=T))
+                   RUID               ETHNICITY                    RACE 
+           5.233495e+07            1.492537e-02            2.238806e+00 
+                AVG_BMI               MEAN_EGFR             change_EGFR 
+           6.768996e+01            6.643492e+01           -7.410946e+00 
+ MEDIAN_SYSTOLIC_BEFORE   MEDIAN_SYSTOLIC_AFTER  MEDIAN_SYSTOLIC_CHANGE 
+           1.399254e+02            1.400672e+02            1.417910e-01 
+MEDIAN_DIASTOLIC_BEFORE  MEDIAN_DIASTOLIC_AFTER MEDIAN_DIASTOLIC_CHANGE 
+           7.397761e+01            7.210448e+01           -1.873134e+00 
+      MEDIAN_MAP_BEFORE        MEDIAN_MAP_AFTER       MEDIAN_MAP_CHANGE 
+           9.588060e+01            9.478607e+01           -1.094527e+00 
+> print ( colMeans(data_CHF_ALL[c('RUID', 'ETHNICITY', 'RACE', 'AVG_BMI', 'MEAN_EGFR', 'change_EGFR', 'MEDIAN_SYSTOLIC_BEFORE', 'MEDIAN_SYSTOLIC_AFTER', 'MEDIAN_SYSTOLIC_CHANGE', 'MEDIAN_DIASTOLIC_BEFORE', 'MEDIAN_DIASTOLIC_AFTER', 'MEDIAN_DIASTOLIC_CHANGE', 'MEDIAN_MAP_BEFORE', 'MEDIAN_MAP_AFTER' , 'MEDIAN_MAP_CHANGE')] , na.rm=T))
+                   RUID               ETHNICITY                    RACE 
+           4.869011e+07            1.056338e-02            2.390845e+00 
+                AVG_BMI               MEAN_EGFR             change_EGFR 
+           6.144701e+01            6.746126e+01           -4.907913e+00 
+ MEDIAN_SYSTOLIC_BEFORE   MEDIAN_SYSTOLIC_AFTER  MEDIAN_SYSTOLIC_CHANGE 
+           1.297676e+02            1.296637e+02           -1.038732e-01 
+MEDIAN_DIASTOLIC_BEFORE  MEDIAN_DIASTOLIC_AFTER MEDIAN_DIASTOLIC_CHANGE 
+           6.972183e+01            6.848415e+01           -1.237676e+00 
+      MEDIAN_MAP_BEFORE        MEDIAN_MAP_AFTER       MEDIAN_MAP_CHANGE 
+           8.994601e+01            8.898709e+01           -9.589202e-01 
+> 
+> 
+> ## print the SD's for vitals/BP, by disease cluster
+> print("Print STANDARD DEVIATIONS: ------------------------------------------------------------------------------------------------------------------------")
+[1] "Print STANDARD DEVIATIONS: ------------------------------------------------------------------------------------------------------------------------"
+> print(paste("HTN", "n_IC: ", dim(data_HTN_IC)[1], "n_OOC: ", dim(data_HTN_OOC)[1], "n_ALL: ", dim(data[1])))
+[1] "HTN n_IC:  3818 n_OOC:  2043 n_ALL:  6111"
+[2] "HTN n_IC:  3818 n_OOC:  2043 n_ALL:  1"   
+> print ( colSds(data_HTN_IC[c('RUID', 'ETHNICITY', 'RACE', 'AVG_BMI', 'MEAN_EGFR', 'change_EGFR', 'MEDIAN_SYSTOLIC_BEFORE', 'MEDIAN_SYSTOLIC_AFTER', 'MEDIAN_SYSTOLIC_CHANGE', 'MEDIAN_DIASTOLIC_BEFORE', 'MEDIAN_DIASTOLIC_AFTER', 'MEDIAN_DIASTOLIC_CHANGE', 'MEDIAN_MAP_BEFORE', 'MEDIAN_MAP_AFTER' , 'MEDIAN_MAP_CHANGE')] , na.rm=T))
+                   RUID               ETHNICITY                    RACE 
+           2.865571e+07            5.984881e+00            1.002468e+00 
+                AVG_BMI               MEAN_EGFR             change_EGFR 
+           5.703206e+02            2.168298e+01            1.203467e+01 
+ MEDIAN_SYSTOLIC_BEFORE   MEDIAN_SYSTOLIC_AFTER  MEDIAN_SYSTOLIC_CHANGE 
+           1.093676e+01            1.026356e+01            1.132035e+01 
+MEDIAN_DIASTOLIC_BEFORE  MEDIAN_DIASTOLIC_AFTER MEDIAN_DIASTOLIC_CHANGE 
+           8.239380e+00            8.357813e+00            7.393869e+00 
+      MEDIAN_MAP_BEFORE        MEDIAN_MAP_AFTER       MEDIAN_MAP_CHANGE 
+           7.815932e+00            7.454098e+00            7.708841e+00 
+> print ( colSds(data_HTN_OOC[c('RUID', 'ETHNICITY', 'RACE', 'AVG_BMI', 'MEAN_EGFR', 'change_EGFR', 'MEDIAN_SYSTOLIC_BEFORE', 'MEDIAN_SYSTOLIC_AFTER', 'MEDIAN_SYSTOLIC_CHANGE', 'MEDIAN_DIASTOLIC_BEFORE', 'MEDIAN_DIASTOLIC_AFTER', 'MEDIAN_DIASTOLIC_CHANGE', 'MEDIAN_MAP_BEFORE', 'MEDIAN_MAP_AFTER' , 'MEDIAN_MAP_CHANGE')] , na.rm=T))
+                   RUID               ETHNICITY                    RACE 
+           2.944015e+07            7.566824e+00            1.164450e+00 
+                AVG_BMI               MEAN_EGFR             change_EGFR 
+           3.745795e+02            2.743294e+01            2.944392e+01 
+ MEDIAN_SYSTOLIC_BEFORE   MEDIAN_SYSTOLIC_AFTER  MEDIAN_SYSTOLIC_CHANGE 
+           1.624673e+01            1.270377e+01            1.702765e+01 
+MEDIAN_DIASTOLIC_BEFORE  MEDIAN_DIASTOLIC_AFTER MEDIAN_DIASTOLIC_CHANGE 
+           9.460449e+00            9.175884e+00            8.292478e+00 
+      MEDIAN_MAP_BEFORE        MEDIAN_MAP_AFTER       MEDIAN_MAP_CHANGE 
+           9.626530e+00            8.581454e+00            9.738958e+00 
+> print ( colSds(data[c('RUID', 'ETHNICITY', 'RACE', 'AVG_BMI', 'MEAN_EGFR', 'change_EGFR', 'MEDIAN_SYSTOLIC_BEFORE', 'MEDIAN_SYSTOLIC_AFTER', 'MEDIAN_SYSTOLIC_CHANGE', 'MEDIAN_DIASTOLIC_BEFORE', 'MEDIAN_DIASTOLIC_AFTER', 'MEDIAN_DIASTOLIC_CHANGE', 'MEDIAN_MAP_BEFORE', 'MEDIAN_MAP_AFTER' , 'MEDIAN_MAP_CHANGE')] , na.rm=T))
+                   RUID               ETHNICITY                    RACE 
+           2.891325e+07            6.566593e+00            1.067467e+00 
+                AVG_BMI               MEAN_EGFR             change_EGFR 
+           5.039971e+02            2.396038e+01            1.945882e+01 
+ MEDIAN_SYSTOLIC_BEFORE   MEDIAN_SYSTOLIC_AFTER  MEDIAN_SYSTOLIC_CHANGE 
+           1.350476e+01            1.184854e+01            1.354855e+01 
+MEDIAN_DIASTOLIC_BEFORE  MEDIAN_DIASTOLIC_AFTER MEDIAN_DIASTOLIC_CHANGE 
+           8.979529e+00            8.960969e+00            7.704522e+00 
+      MEDIAN_MAP_BEFORE        MEDIAN_MAP_AFTER       MEDIAN_MAP_CHANGE 
+           8.916397e+00            8.342336e+00            8.454263e+00 
+> 
+> print(paste("DM", "n_IC: ", dim(data_DM_IC)[1], "n_OOC: ", dim(data_DM_OOC)[1], "n_ALL: ", dim(data_DM_ALL[1])))
+[1] "DM n_IC:  901 n_OOC:  625 n_ALL:  1639"
+[2] "DM n_IC:  901 n_OOC:  625 n_ALL:  1"   
+> print ( colSds(data_DM_IC[c('RUID', 'ETHNICITY', 'RACE', 'AVG_BMI', 'MEAN_EGFR', 'change_EGFR', 'MEDIAN_SYSTOLIC_BEFORE', 'MEDIAN_SYSTOLIC_AFTER', 'MEDIAN_SYSTOLIC_CHANGE', 'MEDIAN_DIASTOLIC_BEFORE', 'MEDIAN_DIASTOLIC_AFTER', 'MEDIAN_DIASTOLIC_CHANGE', 'MEDIAN_MAP_BEFORE', 'MEDIAN_MAP_AFTER' , 'MEDIAN_MAP_CHANGE')] , na.rm=T))
+                   RUID               ETHNICITY                    RACE 
+           2.916956e+07            1.237491e-01            1.103145e+00 
+                AVG_BMI               MEAN_EGFR             change_EGFR 
+           1.183249e+02            2.388862e+01            1.196449e+01 
+ MEDIAN_SYSTOLIC_BEFORE   MEDIAN_SYSTOLIC_AFTER  MEDIAN_SYSTOLIC_CHANGE 
+           1.073630e+01            1.019027e+01            1.089135e+01 
+MEDIAN_DIASTOLIC_BEFORE  MEDIAN_DIASTOLIC_AFTER MEDIAN_DIASTOLIC_CHANGE 
+           7.938873e+00            8.036318e+00            7.037740e+00 
+      MEDIAN_MAP_BEFORE        MEDIAN_MAP_AFTER       MEDIAN_MAP_CHANGE 
+           7.377557e+00            7.026668e+00            7.321638e+00 
+> print ( colSds(data_DM_OOC[c('RUID', 'ETHNICITY', 'RACE', 'AVG_BMI', 'MEAN_EGFR', 'change_EGFR', 'MEDIAN_SYSTOLIC_BEFORE', 'MEDIAN_SYSTOLIC_AFTER', 'MEDIAN_SYSTOLIC_CHANGE', 'MEDIAN_DIASTOLIC_BEFORE', 'MEDIAN_DIASTOLIC_AFTER', 'MEDIAN_DIASTOLIC_CHANGE', 'MEDIAN_MAP_BEFORE', 'MEDIAN_MAP_AFTER' , 'MEDIAN_MAP_CHANGE')] , na.rm=T))
+                   RUID               ETHNICITY                    RACE 
+           2.925517e+07            5.596103e+00            1.306754e+00 
+                AVG_BMI               MEAN_EGFR             change_EGFR 
+           3.087431e+02            3.678437e+01            4.653415e+01 
+ MEDIAN_SYSTOLIC_BEFORE   MEDIAN_SYSTOLIC_AFTER  MEDIAN_SYSTOLIC_CHANGE 
+           1.210980e+01            1.183863e+01            1.205241e+01 
+MEDIAN_DIASTOLIC_BEFORE  MEDIAN_DIASTOLIC_AFTER MEDIAN_DIASTOLIC_CHANGE 
+           8.922785e+00            8.747723e+00            7.251332e+00 
+      MEDIAN_MAP_BEFORE        MEDIAN_MAP_AFTER       MEDIAN_MAP_CHANGE 
+           8.260876e+00            7.868018e+00            7.971247e+00 
+> print ( colSds(data_DM_ALL[c('RUID', 'ETHNICITY', 'RACE', 'AVG_BMI', 'MEAN_EGFR', 'change_EGFR', 'MEDIAN_SYSTOLIC_BEFORE', 'MEDIAN_SYSTOLIC_AFTER', 'MEDIAN_SYSTOLIC_CHANGE', 'MEDIAN_DIASTOLIC_BEFORE', 'MEDIAN_DIASTOLIC_AFTER', 'MEDIAN_DIASTOLIC_CHANGE', 'MEDIAN_MAP_BEFORE', 'MEDIAN_MAP_AFTER' , 'MEDIAN_MAP_CHANGE')] , na.rm=T))
+                   RUID               ETHNICITY                    RACE 
+           2.922843e+07            4.233920e+00            1.202656e+00 
+                AVG_BMI               MEAN_EGFR             change_EGFR 
+           2.422211e+02            2.960508e+01            3.023942e+01 
+ MEDIAN_SYSTOLIC_BEFORE   MEDIAN_SYSTOLIC_AFTER  MEDIAN_SYSTOLIC_CHANGE 
+           1.179549e+01            1.162946e+01            1.136876e+01 
+MEDIAN_DIASTOLIC_BEFORE  MEDIAN_DIASTOLIC_AFTER MEDIAN_DIASTOLIC_CHANGE 
+           8.555214e+00            8.694858e+00            7.110569e+00 
+      MEDIAN_MAP_BEFORE        MEDIAN_MAP_AFTER       MEDIAN_MAP_CHANGE 
+           8.118286e+00            7.901835e+00            7.564651e+00 
+> 
+> print(paste("CHF", "n_IC: ", dim(data_CHF_IC)[1], "n_OOC: ", dim(data_CHF_OOC)[1], "n_ALL: ", dim(data_CHF_ALL[1])))
+[1] "CHF n_IC:  202 n_OOC:  67 n_ALL:  284"
+[2] "CHF n_IC:  202 n_OOC:  67 n_ALL:  1"  
+> print ( colSds(data_CHF_IC[c('RUID', 'ETHNICITY', 'RACE', 'AVG_BMI', 'MEAN_EGFR', 'change_EGFR', 'MEDIAN_SYSTOLIC_BEFORE', 'MEDIAN_SYSTOLIC_AFTER', 'MEDIAN_SYSTOLIC_CHANGE', 'MEDIAN_DIASTOLIC_BEFORE', 'MEDIAN_DIASTOLIC_AFTER', 'MEDIAN_DIASTOLIC_CHANGE', 'MEDIAN_MAP_BEFORE', 'MEDIAN_MAP_AFTER' , 'MEDIAN_MAP_CHANGE')] , na.rm=T))
+                   RUID               ETHNICITY                    RACE 
+           2.908416e+07            9.925589e-02            1.129556e+00 
+                AVG_BMI               MEAN_EGFR             change_EGFR 
+           2.708964e+02            2.071345e+01            1.244299e+01 
+ MEDIAN_SYSTOLIC_BEFORE   MEDIAN_SYSTOLIC_AFTER  MEDIAN_SYSTOLIC_CHANGE 
+           1.264749e+01            1.158073e+01            1.134436e+01 
+MEDIAN_DIASTOLIC_BEFORE  MEDIAN_DIASTOLIC_AFTER MEDIAN_DIASTOLIC_CHANGE 
+           7.822652e+00            8.480470e+00            7.772448e+00 
+      MEDIAN_MAP_BEFORE        MEDIAN_MAP_AFTER       MEDIAN_MAP_CHANGE 
+           7.913127e+00            7.764087e+00            7.867083e+00 
+> print ( colSds(data_CHF_OOC[c('RUID', 'ETHNICITY', 'RACE', 'AVG_BMI', 'MEAN_EGFR', 'change_EGFR', 'MEDIAN_SYSTOLIC_BEFORE', 'MEDIAN_SYSTOLIC_AFTER', 'MEDIAN_SYSTOLIC_CHANGE', 'MEDIAN_DIASTOLIC_BEFORE', 'MEDIAN_DIASTOLIC_AFTER', 'MEDIAN_DIASTOLIC_CHANGE', 'MEDIAN_MAP_BEFORE', 'MEDIAN_MAP_AFTER' , 'MEDIAN_MAP_CHANGE')] , na.rm=T))
+                   RUID               ETHNICITY                    RACE 
+           2.930469e+07            1.221694e-01            1.315289e+00 
+                AVG_BMI               MEAN_EGFR             change_EGFR 
+           2.557863e+02            2.393009e+01            1.715081e+01 
+ MEDIAN_SYSTOLIC_BEFORE   MEDIAN_SYSTOLIC_AFTER  MEDIAN_SYSTOLIC_CHANGE 
+           1.253185e+01            1.190267e+01            1.165469e+01 
+MEDIAN_DIASTOLIC_BEFORE  MEDIAN_DIASTOLIC_AFTER MEDIAN_DIASTOLIC_CHANGE 
+           9.890856e+00            9.774556e+00            7.748090e+00 
+      MEDIAN_MAP_BEFORE        MEDIAN_MAP_AFTER       MEDIAN_MAP_CHANGE 
+           8.347100e+00            7.955411e+00            8.407009e+00 
+> print ( colSds(data_CHF_ALL[c('RUID', 'ETHNICITY', 'RACE', 'AVG_BMI', 'MEAN_EGFR', 'change_EGFR', 'MEDIAN_SYSTOLIC_BEFORE', 'MEDIAN_SYSTOLIC_AFTER', 'MEDIAN_SYSTOLIC_CHANGE', 'MEDIAN_DIASTOLIC_BEFORE', 'MEDIAN_DIASTOLIC_AFTER', 'MEDIAN_DIASTOLIC_CHANGE', 'MEDIAN_MAP_BEFORE', 'MEDIAN_MAP_AFTER' , 'MEDIAN_MAP_CHANGE')] , na.rm=T))
+                   RUID               ETHNICITY                    RACE 
+           2.935952e+07            1.024145e-01            1.206016e+00 
+                AVG_BMI               MEAN_EGFR             change_EGFR 
+           2.594728e+02            2.143547e+01            1.359801e+01 
+ MEDIAN_SYSTOLIC_BEFORE   MEDIAN_SYSTOLIC_AFTER  MEDIAN_SYSTOLIC_CHANGE 
+           1.385407e+01            1.311132e+01            1.139613e+01 
+MEDIAN_DIASTOLIC_BEFORE  MEDIAN_DIASTOLIC_AFTER MEDIAN_DIASTOLIC_CHANGE 
+           8.641981e+00            9.192230e+00            7.756499e+00 
+      MEDIAN_MAP_BEFORE        MEDIAN_MAP_AFTER       MEDIAN_MAP_CHANGE 
+           8.636205e+00            8.504821e+00            7.977545e+00 
+> 
+> 
+> ## print stuff for demographics table (for paper)
+> features_to_print = c('AGE_ENGAGE', 'MEDIAN_SYSTOLIC_BEFORE','MEDIAN_DIASTOLIC_AFTER','MEDIAN_DIASTOLIC_AFTER')
+> feature = 'AGE_ENGAGE'
+> label = "Age, years"
+> cat(paste(paste(label, paste(round(colMeans(data_HTN_IC[feature]),2),"\u00B1",round(colSds(data_HTN_IC[feature]),2), sep=''), paste(round(colMeans(data_HTN_OOC[feature]),2),"\u00B1",round(colSds(data_HTN_OOC[feature]),2), sep=''), sep="\t") , '\n'))
+Age, years	66.1±12.79	61.64±12.69 
+> 
+> # categorical variables
+> feature = 'SEX'
+> label = "Sex"
+> indicator = "F"
+> cat(paste(paste(label, paste(dim(subset(data_HTN_IC, data_HTN_IC[feature]==indicator))," (",round(dim(subset(data_HTN_IC, data_HTN_IC[feature]==indicator))[1]/dim(data_HTN_IC)[1]*100,0), "%) female", sep=''), paste(dim(subset(data_HTN_OOC, data_HTN_OOC[feature]==indicator))," (",round(dim(subset(data_HTN_OOC, data_HTN_OOC[feature]==indicator))[1]/dim(data_HTN_OOC)[1]*100,0), "%) female", sep=''), sep="\t") , '\n'))
+Sex	1966 (51%) female	1026 (50%) female 
+ Sex	43 (51%) female	43 (50%) female 
+> feature = 'RACE'
+> label = "white"
+> indicator = 3
+> cat(paste(paste(label, paste(dim(subset(data_HTN_IC, data_HTN_IC[feature]==indicator))," (",round(dim(subset(data_HTN_IC, data_HTN_IC[feature]==indicator))[1]/dim(data_HTN_IC)[1]*100,0), "%) white", sep=''), paste(dim(subset(data_HTN_OOC, data_HTN_OOC[feature]==indicator))," (",round(dim(subset(data_HTN_OOC, data_HTN_OOC[feature]==indicator))[1]/dim(data_HTN_OOC)[1]*100,0), "%) white", sep=''), sep="\t") , '\n'))
+white	3271 (86%) white	1650 (81%) white 
+ white	43 (86%) white	43 (81%) white 
+> label = "black"
+> indicator = 0
+> cat(paste(paste(label, paste(dim(subset(data_HTN_IC, data_HTN_IC[feature]==indicator))," (",round(dim(subset(data_HTN_IC, data_HTN_IC[feature]==indicator))[1]/dim(data_HTN_IC)[1]*100,0), "%) black", sep=''), paste(dim(subset(data_HTN_OOC, data_HTN_OOC[feature]==indicator))," (",round(dim(subset(data_HTN_OOC, data_HTN_OOC[feature]==indicator))[1]/dim(data_HTN_OOC)[1]*100,0), "%) black", sep=''), sep="\t") , '\n'))
+black	466 (12%) black	359 (18%) black 
+ black	43 (12%) black	43 (18%) black 
+> feature = 'DM_TX'
+> label = "Diabetes"
+> indicator = 1
+> cat(paste(paste(label, paste(dim(subset(data_HTN_IC, data_HTN_IC[feature]==indicator))," (",round(dim(subset(data_HTN_IC, data_HTN_IC[feature]==indicator))[1]/dim(data_HTN_IC)[1]*100,0), "%)", sep=''), paste(dim(subset(data_HTN_OOC, data_HTN_OOC[feature]==indicator))," (",round(dim(subset(data_HTN_OOC, data_HTN_OOC[feature]==indicator))[1]/dim(data_HTN_OOC)[1]*100,0), "%)", sep=''), sep="\t") , '\n'))
+Diabetes	901 (24%)	625 (31%) 
+ Diabetes	43 (24%)	43 (31%) 
+> feature = 'CHF_TX'
+> label = "CHF"
+> indicator = 1
+> cat(paste(paste(label, paste(dim(subset(data_HTN_IC, data_HTN_IC[feature]==indicator))," (",round(dim(subset(data_HTN_IC, data_HTN_IC[feature]==indicator))[1]/dim(data_HTN_IC)[1]*100,0), "%)", sep=''), paste(dim(subset(data_HTN_OOC, data_HTN_OOC[feature]==indicator))," (",round(dim(subset(data_HTN_OOC, data_HTN_OOC[feature]==indicator))[1]/dim(data_HTN_OOC)[1]*100,0), "%)", sep=''), sep="\t") , '\n'))
+CHF	202 (5%)	67 (3%) 
+ CHF	43 (5%)	43 (3%) 
+> 
+> # continuous variables 
+> feature = 'AVG_BMI'
+> label = "BMI"
+> cat(paste(paste(label, paste(round(colMeans(data_HTN_IC[feature], na.rm=T),2),"\u00B1",round(colSds(data_HTN_IC[feature],na.rm=T),2), sep=''), paste(round(colMeans(data_HTN_OOC[feature],na.rm=T),2),"\u00B1",round(colSds(data_HTN_OOC[feature],na.rm=T),2), sep=''), sep="\t") , '\n'))
+BMI	53.87±570.32	53.03±374.58 
+> feature = 'MEAN_EGFR'
+> label = "EGFR"
+> cat(paste(paste(label, paste(round(colMeans(data_HTN_IC[feature], na.rm=T),2),"\u00B1",round(colSds(data_HTN_IC[feature], na.rm=T),2), sep=''), paste(round(colMeans(data_HTN_OOC[feature], na.rm=T),2),"\u00B1",round(colSds(data_HTN_OOC[feature],na.rm=T),2), sep=''), sep="\t") , '\n'))
+EGFR	81.07±21.68	87.39±27.43 
+> feature = 'MEDIAN_SYSTOLIC_BEFORE'
+> label = "SBP before MHT initiation"
+> cat(paste(paste(label, paste(round(colMeans(data_HTN_IC[feature]),2),"\u00B1",round(colSds(data_HTN_IC[feature]),2), sep=''), paste(round(colMeans(data_HTN_OOC[feature]),2),"\u00B1",round(colSds(data_HTN_OOC[feature]),2), sep=''), sep="\t") , '\n'))
+SBP before MHT initiation	129.62±10.94	137.99±16.25 
+> feature = 'MEDIAN_SYSTOLIC_AFTER'
+> label = "SBP after MHT initiation"
+> cat(paste(paste(label, paste(round(colMeans(data_HTN_IC[feature]),2),"\u00B1",round(colSds(data_HTN_IC[feature]),2), sep=''), paste(round(colMeans(data_HTN_OOC[feature]),2),"\u00B1",round(colSds(data_HTN_OOC[feature]),2), sep=''), sep="\t") , '\n'))
+SBP after MHT initiation	128.01±10.26	136.42±12.7 
+> feature = 'MEDIAN_DIASTOLIC_BEFORE'
+> label = "DBP before MHT initiation"
+> cat(paste(paste(label, paste(round(colMeans(data_HTN_IC[feature]),2),"\u00B1",round(colSds(data_HTN_IC[feature]),2), sep=''), paste(round(colMeans(data_HTN_OOC[feature]),2),"\u00B1",round(colSds(data_HTN_OOC[feature]),2), sep=''), sep="\t") , '\n'))
+DBP before MHT initiation	74.77±8.24	79.88±9.46 
+> feature = 'MEDIAN_DIASTOLIC_AFTER'
+> label = "DBP after MHT initiation"
+> cat(paste(paste(label, paste(round(colMeans(data_HTN_IC[feature]),2),"\u00B1",round(colSds(data_HTN_IC[feature]),2), sep=''), paste(round(colMeans(data_HTN_OOC[feature]),2),"\u00B1",round(colSds(data_HTN_OOC[feature]),2), sep=''), sep="\t") , '\n'))
+DBP after MHT initiation	73.18±8.36	78.17±9.18 
+> 
+> 
+> 
+> 
+> 
+> 
+> proc.time()
+   user  system elapsed 
+  1.917   0.077   2.012 
