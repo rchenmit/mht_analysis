@@ -11,7 +11,7 @@ diff = set(list2_HTN).difference( set(list1_DM))
 diff = list(diff) #cast the set as a list
 
 ruid_DM = list1_DM[0:15] #15 patients with DM
-ruid_NO_DM = list(diff)[0:15] #15 patients that do NOT have DM
+ruid_NO_DM = diff[0:15] #15 patients that do NOT have DM
 
 all_sample_ruid = ruid_DM + ruid_NO_DM
 all_sample_status = [1]*15 + [0]*15
@@ -20,7 +20,7 @@ all_sample_status = [1]*15 + [0]*15
 df_sample_DM_status = pd.DataFrame( {'RUID' : all_sample_ruid ,
                                      'DIABETES_STATUS': all_sample_status } )
 df_sample_EGFR_aggregate = df_EGFR_aggregate[df_EGFR_aggregate['RUID'].isin(all_sample_ruid)]
-df_sample_BMI_aggregate = df_BMI_aggregate[df_EGFR_aggregate['RUID'].isin(all_sample_ruid)]
+df_sample_BMI_aggregate = df_BMI_aggregate[df_BMI_aggregate['RUID'].isin(all_sample_ruid)]
 df_sample_Phenotype = df_Phenotype[df_Phenotype['RUID'].isin(all_sample_ruid)]
 df_sample_BP = df_BP[df_BP['RUID'].isin(all_sample_ruid)]
 df_sample_ICD = df_ICD[df_ICD['RUID'].isin(all_sample_ruid)]

@@ -13,7 +13,6 @@ output_dir = '../../data/new_data_20140416/Data_curated_RC/'
 
 #predominant conrol status
 df_BP_STATUS = pd.DataFrame(d_bp_status_pt_level_clinician.items(), columns=['RUID', 'BP_STATUS']) #predominant BP status
-df_BP_STATUS['BP_STATUS'][df_BP_STATUS['BP_STATUS']== -1] = 0
 #Comorbidity (DM / CHF) status [whether or not they're being treated for it in the MHT program#
 l_patients_DM = data_BP_stratComorbid['dm']['d_bp_before_after_MHT']['AFTER'].keys() #this gives the list of RUID's which are being tx for DM
 l_patients_CHF = data_BP_stratComorbid['chf']['d_bp_before_after_MHT']['AFTER'].keys()
