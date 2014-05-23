@@ -124,9 +124,15 @@ for dz in data_BP_stratComorbid:
             l_SBP_after_this_pt = d_bp_before_after_MHT_thisComorbid['AFTER'][ruid]['SYSTOLIC_list']
             l_DBP_before_this_pt = d_bp_before_after_MHT_thisComorbid['BEFORE'][ruid]['DIASTOLIC_list'];
             l_DBP_after_this_pt = d_bp_before_after_MHT_thisComorbid['AFTER'][ruid]['DIASTOLIC_list']
-            ks_MAP_IC = np.append(ks_MAP_IC, ks_2samp(l_MAP_before_this_pt, l_MAP_after_this_pt))
-            ks_SBP_IC = np.append(ks_SBP_IC, ks_2samp(l_SBP_before_this_pt, l_SBP_after_this_pt))
-            ks_DBP_IC = np.append(ks_DBP_IC, ks_2samp(l_DBP_before_this_pt, l_DBP_after_this_pt))
+            ks_2samp_MAP = ks_2samp(l_MAP_before_this_pt, l_MAP_after_this_pt)
+            ks_2samp_SBP = ks_2samp(l_SBP_before_this_pt, l_SBP_after_this_pt)
+            ks_2samp_DBP = ks_2samp(l_DBP_before_this_pt, l_DBP_after_this_pt)
+            ks_MAP_IC = np.append(ks_MAP_IC, ks_2samp_MAP)
+            ks_SBP_IC = np.append(ks_SBP_IC, ks_2samp_SBP)
+            ks_DBP_IC = np.append(ks_DBP_IC, ks_2samp_DBP)
+            ks_pvals_SYSTOLIC[dz][ruid] = ks_2samp_SBP[1]
+            ks_pvals_DIASTOLIC[dz][ruid] = ks_2samp_DBP[1]
+            ks_pvals_MAP[dz][ruid] = ks_2samp_MAP[1]
 
     for ruid in l_pt_ruid_CLINICIAN_OUT_CONTROL:
         if(ruid in d_bp_before_after_MHT_thisComorbid['BEFORE'] and
@@ -149,9 +155,15 @@ for dz in data_BP_stratComorbid:
             l_SBP_after_this_pt = d_bp_before_after_MHT_thisComorbid['AFTER'][ruid]['SYSTOLIC_list']
             l_DBP_before_this_pt = d_bp_before_after_MHT_thisComorbid['BEFORE'][ruid]['DIASTOLIC_list'];
             l_DBP_after_this_pt = d_bp_before_after_MHT_thisComorbid['AFTER'][ruid]['DIASTOLIC_list']
-            ks_MAP_OOC = np.append(ks_MAP_OOC, ks_2samp(l_MAP_before_this_pt, l_MAP_after_this_pt))
-            ks_SBP_OOC = np.append(ks_SBP_OOC, ks_2samp(l_SBP_before_this_pt, l_SBP_after_this_pt))
-            ks_DBP_OOC = np.append(ks_DBP_OOC, ks_2samp(l_DBP_before_this_pt, l_DBP_after_this_pt))
+            ks_2samp_MAP = ks_2samp(l_MAP_before_this_pt, l_MAP_after_this_pt)
+            ks_2samp_SBP = ks_2samp(l_SBP_before_this_pt, l_SBP_after_this_pt)
+            ks_2samp_DBP = ks_2samp(l_DBP_before_this_pt, l_DBP_after_this_pt)
+            ks_MAP_OOC = np.append(ks_MAP_OOC, ks_2samp_MAP)
+            ks_SBP_OOC = np.append(ks_SBP_OOC, ks_2samp_SBP)
+            ks_DBP_OOC = np.append(ks_DBP_OOC, ks_2samp_DBP)
+            ks_pvals_SYSTOLIC[dz][ruid] = ks_2samp_SBP[1]
+            ks_pvals_DIASTOLIC[dz][ruid] = ks_2samp_SBP[1]
+            ks_pvals_MAP[dz][ruid] = ks_2samp_SBP[1]
             
     ######
     ks_MAP_IC = ks_MAP_IC.reshape(len(ks_MAP_IC)/2, 2)

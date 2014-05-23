@@ -58,7 +58,10 @@ df_BP_MEDIAN_BEFORE_AFTER_CHANGE = pd.merge(df_BP_MEDIAN_BEFORE_AFTER_CHANGE, pd
 df_BP_MEDIAN_BEFORE_AFTER_CHANGE = pd.merge(df_BP_MEDIAN_BEFORE_AFTER_CHANGE, pd.DataFrame(d_BP_SYSTOLIC_CHANGE.items(), columns=['RUID', 'MEDIAN_SYSTOLIC_CHANGE']) ,left_on = 'RUID', right_on = 'RUID', how = 'outer')
 df_BP_MEDIAN_BEFORE_AFTER_CHANGE = pd.merge(df_BP_MEDIAN_BEFORE_AFTER_CHANGE, pd.DataFrame(d_BP_DIASTOLIC_CHANGE.items(), columns=['RUID', 'MEDIAN_DIASTOLIC_CHANGE']) ,left_on = 'RUID', right_on = 'RUID', how = 'outer') 
 df_BP_MEDIAN_BEFORE_AFTER_CHANGE = pd.merge(df_BP_MEDIAN_BEFORE_AFTER_CHANGE, pd.DataFrame(d_BP_MAP_CHANGE.items(), columns=['RUID', 'MEDIAN_MAP_CHANGE']) ,left_on = 'RUID', right_on = 'RUID', how = 'outer')
-
+#add p-vals for KS test
+df_BP_MEDIAN_BEFORE_AFTER_CHANGE = pd.merge(df_BP_MEDIAN_BEFORE_AFTER_CHANGE, pd.DataFrame(ks_pvals_SYSTOLIC['HTN'].items(), columns=['RUID', 'P_KS_SYSTOLIC']), left_on = 'RUID', right_on = 'RUID', how = 'outer')
+df_BP_MEDIAN_BEFORE_AFTER_CHANGE = pd.merge(df_BP_MEDIAN_BEFORE_AFTER_CHANGE, pd.DataFrame(ks_pvals_DIASTOLIC['HTN'].items(), columns=['RUID', 'P_KS_DIASTOLIC']), left_on = 'RUID', right_on = 'RUID', how = 'outer')
+df_BP_MEDIAN_BEFORE_AFTER_CHANGE = pd.merge(df_BP_MEDIAN_BEFORE_AFTER_CHANGE, pd.DataFrame(ks_pvals_MAP['HTN'].items(), columns=['RUID', 'P_KS_MAP']), left_on = 'RUID', right_on = 'RUID', how = 'outer')
 
 
 ## gather data for training examples / features ####################################################################################
@@ -75,5 +78,4 @@ df_BPSTATUS_Phenotype_BMI_ECG_EGFR_BPCHANGE = pd.merge(df_BPSTATUS_Phenotype_BMI
 
 #write file 
 df_BPSTATUS_Phenotype_BMI_ECG_EGFR_BPCHANGE.to_csv( output_dir + 'df_BPSTATUS_Phenotype_BMI_ECG_EGFR_BPCHANGE.csv', index = False)
-
 

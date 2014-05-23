@@ -10,6 +10,11 @@ else:
 
 
 ## load pickles
+pickle_file = pickle_dir + 'list_ruid.pickle'
+with open(pickle_file, 'rb') as fhandle:
+    list_ruid = pickle.load(fhandle)
+fhandle.close()
+
 pickle_file = pickle_dir + 'df_bp_clinician.pickle'
 with open(pickle_file, 'rb') as fhandle:
     df_bp_clinician = pickle.load(fhandle)
