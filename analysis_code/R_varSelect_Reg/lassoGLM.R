@@ -89,6 +89,9 @@ data0_model_features <- with(data0_removeMissing, data.frame(
 		CHF = CHF
 		)
 	)
+x <- as.matrix(data0_model_features)
+
+## do a separate regression for each one
 y <- data0_removeMissing$SYSTOLIC_CHANGE
 glm_lasso <-glmnet(x, y, family="gaussian", alpha=1) #alpha = 1 for lasso only; alpha=0 for ridge only; in between for blend
 glm_lasso
