@@ -1,0 +1,569 @@
+
+R version 3.1.0 (2014-04-10) -- "Spring Dance"
+Copyright (C) 2014 The R Foundation for Statistical Computing
+Platform: x86_64-apple-darwin13.1.0 (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+[Previously saved workspace restored]
+
+> ##
+> ## R CMD BATCH --slave lassoGLM.R
+> library(glmnet)
+Loading required package: Matrix
+Loaded glmnet 1.9-5
+
+> 
+> input_file = '../../../data/new_data_20140416/Data_curated_RC/df_BPSTATUS_Phenotype_BMI_ECG_EGFR_BPCHANGE.csv'
+> 
+> data <- read.table(input_file, header = T, sep=',')
+> #change sex to binary numbers
+> data['SEX'] = sapply(data['SEX'],function(x) gsub("F",as.integer(0),x))
+> data['SEX'] = sapply(data['SEX'],function(x) gsub("M",as.integer(1),x))
+> 
+> 
+> data0 <- with(data, data.frame(
++       	 	    SYSTOLIC_CHANGE=MEDIAN_SYSTOLIC_CHANGE, 
++ 				DIASTOLIC_CHANGE=MEDIAN_DIASTOLIC_CHANGE, 
++ 				MAP_CHANGE = MEDIAN_MAP_CHANGE,
++ 				SYSTOLIC_SIG_LOWER = KS_SYSTOLIC_SIG_LOWER,
++ 				DIASTOLIC_SIG_LOWER = KS_DIASTOLIC_SIG_LOWER,
++ 				MAP_SIG_LOWER = KS_MAP_SIG_LOWER,
++ 				
++ 				AGE=AGE_ENGAGE,
++ 				SEX = SEX, 
++ 				ETHNICITY_HISPANIC=ETHNICITY,
++ 				RACE = RACE,
++ 				WHITE=WHITE,
++ 				BLACK=BLACK,
++ 				ASIAN=ASIAN,
++ 				HISPANIC=HISPANIC,
++ 				BMI = AVG_BMI,
++ 				change_BMI=change_BMI,
++ 				EGFR = MEAN_EGFR, 
++ 				change_EGFR = change_EGFR,
++ 				DIABETES = DM_TX,
++ 				CHF = CHF_TX,
++ 				SYSTOLIC_BEFORE = MEDIAN_SYSTOLIC_BEFORE,
++ 				SYSTOLIC_AFTER = MEDIAN_SYSTOLIC_AFTER,
++ 				DIASTOLIC_BEFORE = MEDIAN_DIASTOLIC_BEFORE,
++ 				DIASTOLIC_AFTER = MEDIAN_DIASTOLIC_AFTER,
++ 				MAP_BEFORE = MEDIAN_MAP_BEFORE,
++ 				MAP_AFTER = MEDIAN_MAP_AFTER
++ 				))
+> 
+> 
+> 
+> 
+> #transform to numeric
+> data0 = transform(data0, 
++ 		
++       	SYSTOLIC_CHANGE=as.numeric(SYSTOLIC_CHANGE), 
++ 		DIASTOLIC_CHANGE=as.numeric(DIASTOLIC_CHANGE), 
++ 		MAP_CHANGE = as.numeric(MAP_CHANGE),
++ 		SYSTOLIC_SIG_LOWER = as.factor(SYSTOLIC_SIG_LOWER),
++ 		DIASTOLIC_SIG_LOWER = as.factor(DIASTOLIC_SIG_LOWER),
++ 		MAP_SIG_LOWER = as.factor(MAP_SIG_LOWER),
++ 		AGE=as.numeric(AGE),
++ 		SEX = as.numeric(SEX),
++ 		ETHNICITY_HISPANIC = as.factor(ETHNICITY_HISPANIC),
++ 		RACE = as.factor(RACE),
++ 		WHITE=as.factor(WHITE),
++ 		BLACK=as.factor(BLACK),
++ 		ASIAN=as.factor(ASIAN),
++ 		HISPANIC=as.factor(HISPANIC),
++ 		BMI = as.numeric(BMI),
++ 		change_BMI = as.numeric(change_BMI),
++ 		EGFR = as.numeric(EGFR),
++ 		change_EGFR = as.numeric(change_EGFR),
++ 		DIABETES = as.factor(DIABETES),
++ 		CHF = as.factor(CHF),
++ 		SYSTOLIC_BEFORE = as.numeric(SYSTOLIC_BEFORE),
++ 		SYSTOLIC_AFTER = as.numeric(SYSTOLIC_AFTER),
++ 		DIASTOLIC_BEFORE = as.numeric(DIASTOLIC_BEFORE),
++ 		DIASTOLIC_AFTER = as.numeric(DIASTOLIC_AFTER),
++ 		MAP_BEFORE = as.numeric(MAP_BEFORE),
++ 		MAP_AFTER = as.numeric(MAP_AFTER)
++ 		)	     
+> 
+> #scale data
+> data0_removeMissing <- na.omit(data0) 
+> data0_model_features <- with(data0_removeMissing, data.frame(
++ 		AGE=AGE,
++ 		SEX = SEX,
++ 		HISPANIC = ETHNICITY_HISPANIC,
++ 		RACE = RACE,
++ 		BMI = BMI,
++ 		change_BMI = change_BMI,
++ 		EGFR = EGFR,
++ 		change_EGFR = change_EGFR,
++ 		DIABETES = DIABETES,
++ 		CHF = CHF
++ 		)
++ 	)
+> y <- data0_removeMissing$SYSTOLIC_CHANGE
+> glm_lasso <-glmnet(x, y, family="gaussian", alpha=1) #alpha = 1 for lasso only; alpha=0 for ridge only; in between for blend
+> glm_lasso
+
+Call:  glmnet(x = x, y = y, family = "gaussian", alpha = 1) 
+
+      Df      %Dev   Lambda
+ [1,]  0 0.0000000 0.667500
+ [2,]  1 0.0004056 0.608200
+ [3,]  1 0.0007423 0.554100
+ [4,]  1 0.0010220 0.504900
+ [5,]  2 0.0014130 0.460100
+ [6,]  2 0.0017990 0.419200
+ [7,]  2 0.0021180 0.381900
+ [8,]  2 0.0023840 0.348000
+ [9,]  2 0.0026040 0.317100
+[10,]  2 0.0027880 0.288900
+[11,]  2 0.0029390 0.263300
+[12,]  2 0.0030660 0.239900
+[13,]  2 0.0031700 0.218600
+[14,]  3 0.0032760 0.199100
+[15,]  3 0.0033760 0.181500
+[16,]  4 0.0034630 0.165300
+[17,]  4 0.0035540 0.150600
+[18,]  5 0.0036470 0.137300
+[19,]  5 0.0037270 0.125100
+[20,]  5 0.0037940 0.114000
+[21,]  5 0.0038490 0.103800
+[22,]  5 0.0038950 0.094610
+[23,]  6 0.0039380 0.086210
+[24,]  6 0.0039760 0.078550
+[25,]  7 0.0040270 0.071570
+[26,]  7 0.0040780 0.065210
+[27,]  7 0.0041200 0.059420
+[28,]  7 0.0041540 0.054140
+[29,]  7 0.0041830 0.049330
+[30,]  7 0.0042070 0.044950
+[31,]  7 0.0042270 0.040950
+[32,]  7 0.0042430 0.037320
+[33,]  7 0.0042570 0.034000
+[34,]  7 0.0042680 0.030980
+[35,]  7 0.0042780 0.028230
+[36,]  7 0.0042860 0.025720
+[37,]  7 0.0042920 0.023440
+[38,]  7 0.0042970 0.021350
+[39,]  7 0.0043020 0.019460
+[40,]  8 0.0043060 0.017730
+[41,]  9 0.0043090 0.016150
+[42,]  9 0.0043130 0.014720
+[43,]  9 0.0043150 0.013410
+[44,]  9 0.0043180 0.012220
+[45,]  9 0.0043190 0.011130
+[46,]  9 0.0043210 0.010140
+[47,]  9 0.0043220 0.009244
+[48,]  9 0.0043230 0.008422
+[49,]  9 0.0043240 0.007674
+[50,]  9 0.0043250 0.006992
+[51,]  9 0.0043260 0.006371
+[52,]  9 0.0043260 0.005805
+[53,]  9 0.0043270 0.005290
+[54,]  9 0.0043270 0.004820
+[55,]  9 0.0043270 0.004391
+[56,]  9 0.0043270 0.004001
+[57,]  9 0.0043280 0.003646
+[58,]  9 0.0043280 0.003322
+[59,]  9 0.0043280 0.003027
+[60,]  9 0.0043280 0.002758
+[61,] 10 0.0043280 0.002513
+[62,] 10 0.0043280 0.002290
+[63,] 10 0.0043280 0.002086
+[64,] 10 0.0043280 0.001901
+[65,] 10 0.0043280 0.001732
+[66,] 10 0.0043280 0.001578
+> coef(glm_lasso)[,dim(coef(glm_lasso))[2]] #print the last set of coefficients calculated for the lasso
+  (Intercept)           AGE           SEX      HISPANIC          RACE 
+-4.994521e+00  4.374870e-02 -3.551684e-02 -1.854612e-02 -5.903722e-04 
+          BMI    change_BMI          EGFR   change_EGFR      DIABETES 
+ 8.823574e-05  2.934221e-04  8.590840e-03  3.788494e-02  3.676704e-01 
+          CHF 
+ 8.231955e-01 
+> 
+> y <- data0_removeMissing$DIASTOLIC_CHANGE
+> glm_lasso <-glmnet(x, y, family="gaussian", alpha=1) #alpha = 1 for lasso only; alpha=0 for ridge only; in between for blend
+> glm_lasso
+
+Call:  glmnet(x = x, y = y, family = "gaussian", alpha = 1) 
+
+      Df      %Dev    Lambda
+ [1,]  0 0.0000000 0.3679000
+ [2,]  1 0.0004192 0.3352000
+ [3,]  1 0.0007673 0.3054000
+ [4,]  1 0.0010560 0.2783000
+ [5,]  1 0.0012960 0.2536000
+ [6,]  1 0.0014950 0.2310000
+ [7,]  1 0.0016610 0.2105000
+ [8,]  1 0.0017980 0.1918000
+ [9,]  1 0.0019120 0.1748000
+[10,]  2 0.0020790 0.1592000
+[11,]  3 0.0023110 0.1451000
+[12,]  3 0.0025040 0.1322000
+[13,]  4 0.0026740 0.1205000
+[14,]  5 0.0028560 0.1098000
+[15,]  5 0.0030270 0.1000000
+[16,]  5 0.0031690 0.0911200
+[17,]  5 0.0032870 0.0830300
+[18,]  5 0.0033850 0.0756500
+[19,]  5 0.0034670 0.0689300
+[20,]  6 0.0035630 0.0628100
+[21,]  7 0.0036850 0.0572300
+[22,]  7 0.0037870 0.0521400
+[23,]  8 0.0038750 0.0475100
+[24,]  8 0.0039560 0.0432900
+[25,]  8 0.0040220 0.0394400
+[26,]  8 0.0040770 0.0359400
+[27,]  8 0.0041230 0.0327500
+[28,]  8 0.0041610 0.0298400
+[29,]  8 0.0041930 0.0271900
+[30,]  8 0.0042200 0.0247700
+[31,]  8 0.0042420 0.0225700
+[32,]  8 0.0042600 0.0205700
+[33,]  9 0.0042750 0.0187400
+[34,]  9 0.0042890 0.0170700
+[35,]  9 0.0043010 0.0155600
+[36,]  9 0.0043110 0.0141800
+[37,]  9 0.0043190 0.0129200
+[38,]  9 0.0043250 0.0117700
+[39,]  9 0.0043310 0.0107200
+[40,]  9 0.0043350 0.0097710
+[41,]  9 0.0043390 0.0089030
+[42,]  9 0.0043420 0.0081120
+[43,]  9 0.0043450 0.0073910
+[44,]  9 0.0043470 0.0067350
+[45,]  9 0.0043490 0.0061360
+[46,]  9 0.0043500 0.0055910
+[47,]  9 0.0043520 0.0050940
+[48,]  9 0.0043530 0.0046420
+[49,]  9 0.0043540 0.0042300
+[50,]  9 0.0043540 0.0038540
+[51,]  9 0.0043550 0.0035110
+[52,]  9 0.0043550 0.0031990
+[53,]  9 0.0043560 0.0029150
+[54,]  9 0.0043560 0.0026560
+[55,]  9 0.0043560 0.0024200
+[56,]  9 0.0043570 0.0022050
+[57,]  9 0.0043570 0.0020090
+[58,]  9 0.0043570 0.0018310
+[59,]  9 0.0043570 0.0016680
+[60,]  9 0.0043570 0.0015200
+[61,] 10 0.0043570 0.0013850
+[62,] 10 0.0043570 0.0012620
+[63,] 10 0.0043580 0.0011500
+[64,] 10 0.0043580 0.0010480
+[65,] 10 0.0043580 0.0009546
+[66,] 10 0.0043580 0.0008698
+> coef(glm_lasso)[,dim(coef(glm_lasso))[2]] #print the last set of coefficients calculated for the lasso
+  (Intercept)           AGE           SEX      HISPANIC          RACE 
+-3.809589e+00  1.370908e-02  2.052709e-01  1.139911e-02  1.499785e-01 
+          BMI    change_BMI          EGFR   change_EGFR      DIABETES 
+ 2.805174e-06  3.061653e-04  7.360452e-03  2.158319e-02  4.654113e-02 
+          CHF 
+ 2.436306e-01 
+> 
+> y <- data0_removeMissing$MAP_CHANGE
+> glm_lasso <-glmnet(x, y, family="gaussian", alpha=1) #alpha = 1 for lasso only; alpha=0 for ridge only; in between for blend
+> glm_lasso
+
+Call:  glmnet(x = x, y = y, family = "gaussian", alpha = 1) 
+
+      Df      %Dev   Lambda
+ [1,]  0 0.0000000 0.444700
+ [2,]  1 0.0004931 0.405200
+ [3,]  1 0.0009025 0.369200
+ [4,]  1 0.0012420 0.336400
+ [5,]  1 0.0015250 0.306500
+ [6,]  1 0.0017590 0.279300
+ [7,]  2 0.0020520 0.254500
+ [8,]  2 0.0023750 0.231900
+ [9,]  2 0.0026430 0.211300
+[10,]  2 0.0028650 0.192500
+[11,]  2 0.0030500 0.175400
+[12,]  2 0.0032030 0.159800
+[13,]  2 0.0033310 0.145600
+[14,]  3 0.0034650 0.132700
+[15,]  3 0.0035950 0.120900
+[16,]  3 0.0037030 0.110200
+[17,]  4 0.0037980 0.100400
+[18,]  4 0.0039010 0.091450
+[19,]  4 0.0039850 0.083330
+[20,]  5 0.0040570 0.075920
+[21,]  5 0.0041220 0.069180
+[22,]  7 0.0041880 0.063030
+[23,]  8 0.0042850 0.057430
+[24,]  8 0.0043830 0.052330
+[25,]  8 0.0044640 0.047680
+[26,]  8 0.0045310 0.043450
+[27,]  8 0.0045870 0.039590
+[28,]  8 0.0046340 0.036070
+[29,]  8 0.0046720 0.032870
+[30,]  8 0.0047040 0.029950
+[31,]  8 0.0047300 0.027290
+[32,]  8 0.0047520 0.024860
+[33,]  8 0.0047710 0.022650
+[34,]  8 0.0047860 0.020640
+[35,]  8 0.0047990 0.018810
+[36,]  8 0.0048090 0.017140
+[37,]  8 0.0048180 0.015610
+[38,]  8 0.0048250 0.014230
+[39,]  8 0.0048310 0.012960
+[40,]  8 0.0048360 0.011810
+[41,]  8 0.0048400 0.010760
+[42,]  9 0.0048440 0.009806
+[43,]  9 0.0048470 0.008935
+[44,]  9 0.0048500 0.008141
+[45,]  9 0.0048520 0.007418
+[46,]  9 0.0048540 0.006759
+[47,]  9 0.0048550 0.006158
+[48,]  9 0.0048560 0.005611
+[49,]  9 0.0048580 0.005113
+[50,] 10 0.0048580 0.004659
+[51,] 10 0.0048590 0.004245
+[52,] 10 0.0048600 0.003868
+[53,] 10 0.0048600 0.003524
+[54,] 10 0.0048610 0.003211
+[55,] 10 0.0048610 0.002926
+[56,] 10 0.0048610 0.002666
+[57,] 10 0.0048620 0.002429
+[58,] 10 0.0048620 0.002213
+[59,] 10 0.0048620 0.002017
+[60,] 10 0.0048620 0.001837
+[61,] 10 0.0048620 0.001674
+[62,] 10 0.0048620 0.001525
+[63,] 10 0.0048630 0.001390
+[64,] 10 0.0048630 0.001266
+[65,] 10 0.0048630 0.001154
+[66,] 10 0.0048630 0.001051
+> coef(glm_lasso)[,dim(coef(glm_lasso))[2]] #print the last set of coefficients calculated for the lasso
+  (Intercept)           AGE           SEX      HISPANIC          RACE 
+-4.321473e+00  2.563170e-02  1.597309e-01  6.984050e-04  8.084257e-02 
+          BMI    change_BMI          EGFR   change_EGFR      DIABETES 
+ 4.687268e-05  2.728045e-04  7.088197e-03  2.557829e-02  1.654032e-01 
+          CHF 
+ 2.972872e-01 
+> 
+> x <- as.matrix(data0_model_features)
+> y <- data0_removeMissing$SYSTOLIC_SIG_LOWER
+> glm_lasso <-glmnet(x, y, family="binomial", alpha=1) #alpha = 1 for lasso only; alpha=0 for ridge only; in between for blend
+> glm_lasso
+
+Call:  glmnet(x = x, y = y, family = "binomial", alpha = 1) 
+
+      Df       %Dev    Lambda
+ [1,]  0 -4.990e-14 0.0152900
+ [2,]  2  6.002e-04 0.0139300
+ [3,]  2  1.206e-03 0.0126900
+ [4,]  2  1.700e-03 0.0115600
+ [5,]  4  2.393e-03 0.0105400
+ [6,]  5  3.512e-03 0.0096000
+ [7,]  5  4.461e-03 0.0087470
+ [8,]  5  5.254e-03 0.0079700
+ [9,]  5  5.912e-03 0.0072620
+[10,]  7  6.487e-03 0.0066170
+[11,]  7  6.976e-03 0.0060290
+[12,]  7  7.381e-03 0.0054930
+[13,]  7  7.718e-03 0.0050050
+[14,]  7  7.999e-03 0.0045610
+[15,]  7  8.234e-03 0.0041550
+[16,]  7  8.431e-03 0.0037860
+[17,]  8  8.613e-03 0.0034500
+[18,]  8  8.822e-03 0.0031430
+[19,]  9  9.005e-03 0.0028640
+[20,]  9  9.171e-03 0.0026100
+[21,]  9  9.310e-03 0.0023780
+[22,]  9  9.427e-03 0.0021670
+[23,] 10  9.527e-03 0.0019740
+[24,] 10  9.616e-03 0.0017990
+[25,] 10  9.690e-03 0.0016390
+[26,] 10  9.752e-03 0.0014930
+[27,] 10  9.804e-03 0.0013610
+[28,] 10  9.848e-03 0.0012400
+[29,] 10  9.885e-03 0.0011300
+[30,] 10  9.916e-03 0.0010290
+[31,] 10  9.942e-03 0.0009379
+[32,] 10  9.963e-03 0.0008546
+[33,] 10  9.981e-03 0.0007786
+[34,] 10  9.997e-03 0.0007095
+[35,] 10  1.001e-02 0.0006464
+[36,] 10  1.002e-02 0.0005890
+[37,] 10  1.003e-02 0.0005367
+> coef(glm_lasso)[,dim(coef(glm_lasso))[2]] #print the last set of coefficients calculated for the lasso
+  (Intercept)           AGE           SEX      HISPANIC          RACE 
+-8.127645e-01 -4.123307e-03  4.696052e-02 -3.002633e-03 -1.111276e-01 
+          BMI    change_BMI          EGFR   change_EGFR      DIABETES 
+ 7.151024e-05 -2.720391e-04 -6.956995e-03 -6.116506e-03  6.708693e-02 
+          CHF 
+ 3.480472e-01 
+> 
+> y <- data0_removeMissing$DIASTOLIC_SIG_LOWER
+> glm_lasso <-glmnet(x, y, family="binomial", alpha=1) #alpha = 1 for lasso only; alpha=0 for ridge only; in between for blend
+> glm_lasso
+
+Call:  glmnet(x = x, y = y, family = "binomial", alpha = 1) 
+
+      Df       %Dev    Lambda
+ [1,]  0 -5.741e-14 0.0266900
+ [2,]  1  9.594e-04 0.0243200
+ [3,]  3  1.850e-03 0.0221600
+ [4,]  3  3.186e-03 0.0201900
+ [5,]  3  4.287e-03 0.0183900
+ [6,]  3  5.198e-03 0.0167600
+ [7,]  3  5.953e-03 0.0152700
+ [8,]  3  6.579e-03 0.0139100
+ [9,]  4  7.481e-03 0.0126800
+[10,]  4  8.330e-03 0.0115500
+[11,]  4  9.012e-03 0.0105300
+[12,]  5  9.712e-03 0.0095910
+[13,]  5  1.036e-02 0.0087390
+[14,]  5  1.089e-02 0.0079620
+[15,]  7  1.144e-02 0.0072550
+[16,]  7  1.195e-02 0.0066100
+[17,]  8  1.240e-02 0.0060230
+[18,]  8  1.279e-02 0.0054880
+[19,]  8  1.312e-02 0.0050010
+[20,]  8  1.340e-02 0.0045560
+[21,]  8  1.364e-02 0.0041520
+[22,]  8  1.384e-02 0.0037830
+[23,]  8  1.401e-02 0.0034470
+[24,]  8  1.416e-02 0.0031400
+[25,]  8  1.428e-02 0.0028610
+[26,]  8  1.439e-02 0.0026070
+[27,]  8  1.448e-02 0.0023760
+[28,]  8  1.456e-02 0.0021650
+[29,]  8  1.463e-02 0.0019720
+[30,]  8  1.468e-02 0.0017970
+[31,]  9  1.475e-02 0.0016370
+[32,]  9  1.480e-02 0.0014920
+[33,] 10  1.485e-02 0.0013590
+[34,] 10  1.490e-02 0.0012390
+[35,] 10  1.494e-02 0.0011290
+[36,] 10  1.497e-02 0.0010280
+[37,] 10  1.500e-02 0.0009370
+[38,] 10  1.503e-02 0.0008538
+[39,] 10  1.505e-02 0.0007779
+[40,] 10  1.507e-02 0.0007088
+[41,] 10  1.509e-02 0.0006458
+[42,] 10  1.510e-02 0.0005885
+[43,] 10  1.511e-02 0.0005362
+[44,] 10  1.513e-02 0.0004886
+[45,] 10  1.514e-02 0.0004452
+[46,] 10  1.514e-02 0.0004056
+> coef(glm_lasso)[,dim(coef(glm_lasso))[2]] #print the last set of coefficients calculated for the lasso
+  (Intercept)           AGE           SEX      HISPANIC          RACE 
+-1.3668345267  0.0067271512  0.0184459192 -0.0319508356 -0.0781660385 
+          BMI    change_BMI          EGFR   change_EGFR      DIABETES 
+-0.0001101758 -0.0001846046 -0.0074978273 -0.0068701356  0.0557102640 
+          CHF 
+ 0.5057671317 
+> 
+> y <- data0_removeMissing$MAP_SIG_LOWER
+> glm_lasso <-glmnet(x, y, family="binomial", alpha=1) #alpha = 1 for lasso only; alpha=0 for ridge only; in between for blend
+> glm_lasso
+
+Call:  glmnet(x = x, y = y, family = "binomial", alpha = 1) 
+
+      Df       %Dev    Lambda
+ [1,]  0 -2.509e-14 0.0242400
+ [2,]  1  7.522e-04 0.0220900
+ [3,]  1  1.355e-03 0.0201200
+ [4,]  1  1.840e-03 0.0183400
+ [5,]  1  2.233e-03 0.0167100
+ [6,]  1  2.551e-03 0.0152200
+ [7,]  1  2.810e-03 0.0138700
+ [8,]  3  3.205e-03 0.0126400
+ [9,]  4  3.999e-03 0.0115200
+[10,]  5  4.869e-03 0.0104900
+[11,]  5  5.714e-03 0.0095600
+[12,]  5  6.428e-03 0.0087110
+[13,]  6  7.034e-03 0.0079370
+[14,]  6  7.615e-03 0.0072320
+[15,]  7  8.111e-03 0.0065900
+[16,]  8  8.540e-03 0.0060040
+[17,]  8  8.917e-03 0.0054710
+[18,]  8  9.237e-03 0.0049850
+[19,]  8  9.508e-03 0.0045420
+[20,]  8  9.739e-03 0.0041380
+[21,]  8  9.936e-03 0.0037710
+[22,]  8  1.010e-02 0.0034360
+[23,]  8  1.025e-02 0.0031310
+[24,]  8  1.037e-02 0.0028520
+[25,]  8  1.048e-02 0.0025990
+[26,]  8  1.057e-02 0.0023680
+[27,]  8  1.064e-02 0.0021580
+[28,]  8  1.071e-02 0.0019660
+[29,]  8  1.077e-02 0.0017910
+[30,]  8  1.082e-02 0.0016320
+[31,]  8  1.086e-02 0.0014870
+[32,]  8  1.090e-02 0.0013550
+[33,]  9  1.094e-02 0.0012350
+[34,]  9  1.097e-02 0.0011250
+[35,]  9  1.099e-02 0.0010250
+[36,]  9  1.102e-02 0.0009341
+[37,]  9  1.104e-02 0.0008511
+[38,]  9  1.105e-02 0.0007755
+[39,]  9  1.107e-02 0.0007066
+[40,]  9  1.108e-02 0.0006438
+[41,]  9  1.109e-02 0.0005866
+[42,]  9  1.110e-02 0.0005345
+[43,]  9  1.111e-02 0.0004870
+> coef(glm_lasso)[,dim(coef(glm_lasso))[2]] #print the last set of coefficients calculated for the lasso
+  (Intercept)           AGE           SEX      HISPANIC          RACE 
+-1.0694585656  0.0016209416 -0.0099077470 -0.0299605651 -0.0828858388 
+          BMI    change_BMI          EGFR   change_EGFR      DIABETES 
+ 0.0000000000 -0.0002465518 -0.0056908898 -0.0059156723  0.0536606349 
+          CHF 
+ 0.4976287051 
+> 
+> 
+> # #model
+> # model_SYSTOLIC_0 <- glm(SYSTOLIC_CHANGE~1, data0_removeMissing , family = gaussian)
+> # model_DIASTOLIC_0 <- glm(DIASTOLIC_CHANGE~1, data0_removeMissing , family = gaussian)
+> # model_MAP_0 <- glm(MAP_CHANGE~1, data0_removeMissing , family = gaussian)
+> # model_SYSTOLIC_SIG_LOWER_0 <- glm(SYSTOLIC_SIG_LOWER~1, data0_removeMissing , family = gaussian)
+> # model_DIASTOLIC_SIG_LOWER_0 <- glm(DIASTOLIC_SIG_LOWER~1, data0_removeMissing , family = gaussian)
+> # model_MAP_SIG_LOWER_0 <- glm(MAP_SIG_LOWER~1, data0_removeMissing , family = gaussian)
+> 
+> # model_SYSTOLIC_1 <- update(model0, SYSTOLIC_CHANGE ~ AGE + SEX + WHITE + BLACK + ASIAN + HISPANIC + BMI + change_BMI + EGFR + change_EGFR + DIABETES + CHF )
+> # model_DIASTOLIC_1 <- update(model0, DIASTOLIC_CHANGE ~ AGE + SEX + WHITE + BLACK + ASIAN + HISPANIC + BMI + change_BMI + EGFR + change_EGFR + DIABETES + CHF)
+> # model_MAP_1 <- update(model0, MAP_CHANGE ~ AGE + SEX + WHITE + BLACK + ASIAN + HISPANIC + BMI + change_BMI + EGFR + change_EGFR + DIABETES + CHF )
+> # model_SYSTOLIC_SIG_LOWER_1 <- update(model0, SYSTOLIC_SIG_LOWER ~ AGE + SEX + WHITE + BLACK + ASIAN + HISPANIC + BMI + change_BMI + EGFR + change_EGFR + DIABETES + CHF )
+> # model_DIASTOLIC_SIG_LOWER_1 <- update(model0, DIASTOLIC_SIG_LOWER ~ AGE + SEX + WHITE + BLACK + ASIAN + HISPANIC + BMI + change_BMI + EGFR + change_EGFR + DIABETES + CHF )
+> # model_MAP_SIG_LOWER_1 <- update(model0, MAP_SIG_LOWER ~ AGE + SEX + WHITE + BLACK + ASIAN + HISPANIC + BMI + change_BMI + EGFR + change_EGFR + DIABETES + CHF )
+> 
+> # (f <- as.formula(paste("~", paste(names(coef(model_SYSTOLIC_1))[-1], collapse="+"))))
+> # print( step(model_SYSTOLIC_0, scope=list(lower=~1, upper=f), direction="forward")  )
+> 
+> # (f <- as.formula(paste("~", paste(names(coef(model_DIASTOLIC_1))[-1], collapse="+"))))
+> # print( step(model_DIASTOLIC_0, scope=list(lower=~1, upper=f), direction="forward")  )
+> 
+> # (f <- as.formula(paste("~", paste(names(coef(model_MAP_1))[-1], collapse="+"))))
+> # print( step(model_MAP_0, scope=list(lower=~1, upper=f), direction="forward")  )
+> 
+> # (f <- as.formula(paste("~", paste(names(coef(model_SYSTOLIC_SIG_LOWER_1))[-1], collapse="+"))))
+> # print( step(model_SYSTOLIC_SIG_LOWER_0, scope=list(lower=~1, upper=f), direction="forward")  )
+> 
+> # (f <- as.formula(paste("~", paste(names(coef(model_DIASTOLIC_SIG_LOWER_1))[-1], collapse="+"))))
+> # print( step(model_DIASTOLIC_SIG_LOWER_0, scope=list(lower=~1, upper=f), direction="forward")  )
+> 
+> # (f <- as.formula(paste("~", paste(names(coef(model_MAP_SIG_LOWER_1))[-1], collapse="+"))))
+> # print( step(model_MAP_SIG_LOWER_0, scope=list(lower=~1, upper=f), direction="forward")  )
+> 
+> 
+> 
+> proc.time()
+   user  system elapsed 
+  3.385   0.104   3.528 

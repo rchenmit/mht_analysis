@@ -1,0 +1,670 @@
+
+R version 3.1.0 (2014-04-10) -- "Spring Dance"
+Copyright (C) 2014 The R Foundation for Statistical Computing
+Platform: x86_64-apple-darwin13.1.0 (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+[Previously saved workspace restored]
+
+> ##
+> ## R CMD BATCH --slave stepwiseRegression.R
+> 
+> #wideScreen() #wide screen view
+> 
+> input_file = '../../../data/new_data_20140416/Data_curated_RC/df_BPSTATUS_Phenotype_BMI_ECG_EGFR_BPCHANGE.csv'
+> 
+> data <- read.table(input_file, header = T, sep=',')
+> #change sex to binary numbers
+> data['SEX'] = sapply(data['SEX'],function(x) gsub("F",as.integer(0),x))
+> data['SEX'] = sapply(data['SEX'],function(x) gsub("M",as.integer(1),x))
+> 
+> 
+> data0 <- with(data, data.frame(
++       	 	    SYSTOLIC_CHANGE=MEDIAN_SYSTOLIC_CHANGE, 
++ 				DIASTOLIC_CHANGE=MEDIAN_DIASTOLIC_CHANGE, 
++ 				MAP_CHANGE = MEDIAN_MAP_CHANGE,
++ 				SYSTOLIC_SIG_LOWER = KS_SYSTOLIC_SIG_LOWER,
++ 				DIASTOLIC_SIG_LOWER = KS_DIASTOLIC_SIG_LOWER,
++ 				MAP_SIG_LOWER = KS_MAP_SIG_LOWER,
++ 				
++ 				AGE=AGE_ENGAGE,
++ 				SEX = SEX, 
++ 				WHITE=WHITE,
++ 				BLACK=BLACK,
++ 				ASIAN=ASIAN,
++ 				HISPANIC=HISPANIC,
++ 				BMI = AVG_BMI,
++ 				change_BMI=change_BMI,
++ 				EGFR = MEAN_EGFR, 
++ 				change_EGFR = change_EGFR,
++ 				DIABETES = DM_TX,
++ 				CHF = CHF_TX,
++ 				SYSTOLIC_BEFORE = MEDIAN_SYSTOLIC_BEFORE,
++ 				SYSTOLIC_AFTER = MEDIAN_SYSTOLIC_AFTER,
++ 				DIASTOLIC_BEFORE = MEDIAN_DIASTOLIC_BEFORE,
++ 				DIASTOLIC_AFTER = MEDIAN_DIASTOLIC_AFTER,
++ 				MAP_BEFORE = MEDIAN_MAP_BEFORE,
++ 				MAP_AFTER = MEDIAN_MAP_AFTER
++ 				))
+> 
+> 
+> 
+> 
+> #transform to numeric
+> data0 = transform(data0, 
++ 		
++       	SYSTOLIC_CHANGE=as.numeric(SYSTOLIC_CHANGE), 
++ 		DIASTOLIC_CHANGE=as.numeric(DIASTOLIC_CHANGE), 
++ 		MAP_CHANGE = as.numeric(MAP_CHANGE),
++ 		SYSTOLIC_SIG_LOWER = as.numeric(SYSTOLIC_SIG_LOWER),
++ 		DIASTOLIC_SIG_LOWER = as.numeric(DIASTOLIC_SIG_LOWER),
++ 		MAP_SIG_LOWER = as.numeric(MAP_SIG_LOWER),
++ 		AGE=as.numeric(AGE),
++ 		SEX = as.numeric(SEX),
++ 		WHITE=as.numeric(WHITE),
++ 		BLACK=as.numeric(BLACK),
++ 		ASIAN=as.numeric(ASIAN),
++ 		HISPANIC=as.numeric(HISPANIC),
++ 		BMI = as.numeric(BMI),
++ 		change_BMI = as.numeric(change_BMI),
++ 		EGFR = as.numeric(EGFR),
++ 		change_EGFR = as.numeric(change_EGFR),
++ 		DIABETES = as.numeric(DIABETES),
++ 		CHF = as.numeric(CHF),
++ 		SYSTOLIC_BEFORE = as.numeric(SYSTOLIC_BEFORE),
++ 		SYSTOLIC_AFTER = as.numeric(SYSTOLIC_AFTER),
++ 		DIASTOLIC_BEFORE = as.numeric(DIASTOLIC_BEFORE),
++ 		DIASTOLIC_AFTER = as.numeric(DIASTOLIC_AFTER),
++ 		MAP_BEFORE = as.numeric(MAP_BEFORE),
++ 		MAP_AFTER = as.numeric(MAP_AFTER)
++ 		)	     
+> 
+> #scale data
+> data0 <- as.data.frame(scale(data0))
+> data0_removeMissing <- na.omit(data0)      
+> 
+> #model
+> model_SYSTOLIC_0 <- glm(SYSTOLIC_CHANGE~1, data0_removeMissing , family = gaussian)
+> model_DIASTOLIC_0 <- glm(DIASTOLIC_CHANGE~1, data0_removeMissing , family = gaussian)
+> model_MAP_0 <- glm(MAP_CHANGE~1, data0_removeMissing , family = gaussian)
+> model_SYSTOLIC_SIG_LOWER_0 <- glm(SYSTOLIC_SIG_LOWER~1, data0_removeMissing , family = gaussian)
+> model_DIASTOLIC_SIG_LOWER_0 <- glm(DIASTOLIC_SIG_LOWER~1, data0_removeMissing , family = gaussian)
+> model_MAP_SIG_LOWER_0 <- glm(MAP_SIG_LOWER~1, data0_removeMissing , family = gaussian)
+> 
+> model_SYSTOLIC_1 <- update(model0, SYSTOLIC_CHANGE ~ AGE + SEX + WHITE + BLACK + ASIAN + HISPANIC + BMI + change_BMI + EGFR + change_EGFR + DIABETES + CHF )
+> model_DIASTOLIC_1 <- update(model0, DIASTOLIC_CHANGE ~ AGE + SEX + WHITE + BLACK + ASIAN + HISPANIC + BMI + change_BMI + EGFR + change_EGFR + DIABETES + CHF)
+> model_MAP_1 <- update(model0, MAP_CHANGE ~ AGE + SEX + WHITE + BLACK + ASIAN + HISPANIC + BMI + change_BMI + EGFR + change_EGFR + DIABETES + CHF )
+> model_SYSTOLIC_SIG_LOWER_1 <- update(model0, SYSTOLIC_SIG_LOWER ~ AGE + SEX + WHITE + BLACK + ASIAN + HISPANIC + BMI + change_BMI + EGFR + change_EGFR + DIABETES + CHF )
+> model_DIASTOLIC_SIG_LOWER_1 <- update(model0, DIASTOLIC_SIG_LOWER ~ AGE + SEX + WHITE + BLACK + ASIAN + HISPANIC + BMI + change_BMI + EGFR + change_EGFR + DIABETES + CHF )
+> model_MAP_SIG_LOWER_1 <- update(model0, MAP_SIG_LOWER ~ AGE + SEX + WHITE + BLACK + ASIAN + HISPANIC + BMI + change_BMI + EGFR + change_EGFR + DIABETES + CHF )
+> 
+> (f <- as.formula(paste("~", paste(names(coef(model_SYSTOLIC_1))[-1], collapse="+"))))
+~AGE + SEX + WHITE + BLACK + ASIAN + HISPANIC + BMI + change_BMI + 
+    EGFR + change_EGFR + DIABETES + CHF
+> print( step(model_SYSTOLIC_0, scope=list(lower=~1, upper=f), direction="forward")  )
+Start:  AIC=14033.11
+SYSTOLIC_CHANGE ~ 1
+
+              Df Deviance   AIC
++ change_EGFR  1   4981.0 14023
++ AGE          1   4986.3 14029
++ EGFR         1   4990.1 14032
+<none>             4992.8 14033
++ CHF          1   4991.2 14034
++ change_BMI   1   4992.2 14034
++ DIABETES     1   4992.2 14034
++ HISPANIC     1   4992.6 14035
++ BLACK        1   4992.8 14035
++ ASIAN        1   4992.8 14035
++ WHITE        1   4992.8 14035
++ SEX          1   4992.8 14035
++ BMI          1   4992.8 14035
+
+Step:  AIC=14023.42
+SYSTOLIC_CHANGE ~ change_EGFR
+
+             Df Deviance   AIC
++ AGE         1   4974.5 14019
+<none>            4981.0 14023
++ CHF         1   4979.2 14024
++ DIABETES    1   4980.0 14024
++ change_BMI  1   4980.4 14025
++ HISPANIC    1   4980.7 14025
++ EGFR        1   4980.7 14025
++ ASIAN       1   4981.0 14025
++ BLACK       1   4981.0 14025
++ WHITE       1   4981.0 14025
++ SEX         1   4981.0 14025
++ BMI         1   4981.0 14025
+
+Step:  AIC=14018.97
+SYSTOLIC_CHANGE ~ change_EGFR + AGE
+
+             Df Deviance   AIC
+<none>            4974.5 14019
++ CHF         1   4973.6 14020
++ DIABETES    1   4973.6 14020
++ EGFR        1   4973.9 14020
++ change_BMI  1   4973.9 14020
++ HISPANIC    1   4974.2 14021
++ WHITE       1   4974.4 14021
++ BLACK       1   4974.4 14021
++ ASIAN       1   4974.5 14021
++ BMI         1   4974.5 14021
++ SEX         1   4974.5 14021
+
+Call:  glm(formula = SYSTOLIC_CHANGE ~ change_EGFR + AGE, family = gaussian, 
+    data = data0_removeMissing)
+
+Coefficients:
+(Intercept)  change_EGFR          AGE  
+   0.004874     0.047948     0.038324  
+
+Degrees of Freedom: 4916 Total (i.e. Null);  4914 Residual
+Null Deviance:	    4993 
+Residual Deviance: 4974 	AIC: 14020
+> 
+> (f <- as.formula(paste("~", paste(names(coef(model_DIASTOLIC_1))[-1], collapse="+"))))
+~AGE + SEX + WHITE + BLACK + ASIAN + HISPANIC + BMI + change_BMI + 
+    EGFR + change_EGFR + DIABETES + CHF
+> print( step(model_DIASTOLIC_0, scope=list(lower=~1, upper=f), direction="forward")  )
+Start:  AIC=13563.81
+DIASTOLIC_CHANGE ~ 1
+
+              Df Deviance   AIC
++ change_EGFR  1   4527.2 13554
++ change_BMI   1   4536.2 13564
++ BLACK        1   4536.4 13564
+<none>             4538.3 13564
++ WHITE        1   4536.7 13564
++ SEX          1   4536.9 13564
++ AGE          1   4537.0 13564
++ EGFR         1   4537.9 13565
++ ASIAN        1   4538.1 13566
++ CHF          1   4538.2 13566
++ HISPANIC     1   4538.3 13566
++ BMI          1   4538.3 13566
++ DIABETES     1   4538.3 13566
+
+Step:  AIC=13553.67
+DIASTOLIC_CHANGE ~ change_EGFR
+
+             Df Deviance   AIC
++ change_BMI  1   4525.1 13553
++ BLACK       1   4525.3 13554
+<none>            4527.2 13554
++ WHITE       1   4525.5 13554
++ SEX         1   4525.7 13554
++ AGE         1   4525.8 13554
++ EGFR        1   4526.8 13555
++ ASIAN       1   4526.9 13555
++ CHF         1   4526.9 13555
++ HISPANIC    1   4527.1 13556
++ BMI         1   4527.1 13556
++ DIABETES    1   4527.1 13556
+
+Step:  AIC=13553.43
+DIASTOLIC_CHANGE ~ change_EGFR + change_BMI
+
+           Df Deviance   AIC
++ BLACK     1   4523.2 13553
+<none>          4525.1 13553
++ WHITE     1   4523.5 13554
++ SEX       1   4523.7 13554
++ AGE       1   4523.8 13554
++ EGFR      1   4524.8 13555
++ ASIAN     1   4524.8 13555
++ CHF       1   4524.9 13555
++ HISPANIC  1   4525.0 13555
++ DIABETES  1   4525.1 13555
++ BMI       1   4525.1 13555
+
+Step:  AIC=13553.42
+DIASTOLIC_CHANGE ~ change_EGFR + change_BMI + BLACK
+
+           Df Deviance   AIC
+<none>          4523.2 13553
++ SEX       1   4522.2 13554
++ AGE       1   4522.3 13554
++ EGFR      1   4522.6 13555
++ ASIAN     1   4522.9 13555
++ CHF       1   4523.0 13555
++ DIABETES  1   4523.2 13555
++ HISPANIC  1   4523.2 13555
++ BMI       1   4523.2 13555
++ WHITE     1   4523.2 13555
+
+Call:  glm(formula = DIASTOLIC_CHANGE ~ change_EGFR + change_BMI + BLACK, 
+    family = gaussian, data = data0_removeMissing)
+
+Coefficients:
+(Intercept)  change_EGFR   change_BMI        BLACK  
+  -0.001874     0.046279     0.018835    -0.019079  
+
+Degrees of Freedom: 4916 Total (i.e. Null);  4913 Residual
+Null Deviance:	    4538 
+Residual Deviance: 4523 	AIC: 13550
+> 
+> (f <- as.formula(paste("~", paste(names(coef(model_MAP_1))[-1], collapse="+"))))
+~AGE + SEX + WHITE + BLACK + ASIAN + HISPANIC + BMI + change_BMI + 
+    EGFR + change_EGFR + DIABETES + CHF
+> print( step(model_MAP_0, scope=list(lower=~1, upper=f), direction="forward")  )
+Start:  AIC=13716.39
+MAP_CHANGE ~ 1
+
+              Df Deviance   AIC
++ change_EGFR  1   4667.8 13704
++ AGE          1   4676.3 13713
+<none>             4681.4 13716
++ EGFR         1   4679.6 13716
++ change_BMI   1   4680.0 13717
++ BLACK        1   4680.7 13718
++ SEX          1   4680.8 13718
++ WHITE        1   4680.8 13718
++ CHF          1   4680.8 13718
++ DIABETES     1   4681.2 13718
++ ASIAN        1   4681.3 13718
++ BMI          1   4681.4 13718
++ HISPANIC     1   4681.4 13718
+
+Step:  AIC=13704.14
+MAP_CHANGE ~ change_EGFR
+
+             Df Deviance   AIC
++ AGE         1   4662.7 13701
+<none>            4667.8 13704
++ change_BMI  1   4666.5 13705
++ SEX         1   4667.2 13706
++ CHF         1   4667.2 13706
++ BLACK       1   4667.2 13706
++ WHITE       1   4667.3 13706
++ DIABETES    1   4667.4 13706
++ ASIAN       1   4667.7 13706
++ EGFR        1   4667.8 13706
++ HISPANIC    1   4667.8 13706
++ BMI         1   4667.8 13706
+
+Step:  AIC=13700.78
+MAP_CHANGE ~ change_EGFR + AGE
+
+             Df Deviance   AIC
+<none>            4662.7 13701
++ change_BMI  1   4661.4 13701
++ EGFR        1   4661.6 13702
++ SEX         1   4661.9 13702
++ DIABETES    1   4662.4 13702
++ BLACK       1   4662.5 13702
++ CHF         1   4662.5 13702
++ WHITE       1   4662.6 13703
++ ASIAN       1   4662.7 13703
++ HISPANIC    1   4662.7 13703
++ BMI         1   4662.7 13703
+
+Call:  glm(formula = MAP_CHANGE ~ change_EGFR + AGE, family = gaussian, 
+    data = data0_removeMissing)
+
+Coefficients:
+(Intercept)  change_EGFR          AGE  
+  -0.001003     0.051270     0.033842  
+
+Degrees of Freedom: 4916 Total (i.e. Null);  4914 Residual
+Null Deviance:	    4681 
+Residual Deviance: 4663 	AIC: 13700
+> 
+> (f <- as.formula(paste("~", paste(names(coef(model_SYSTOLIC_SIG_LOWER_1))[-1], collapse="+"))))
+~AGE + SEX + WHITE + BLACK + ASIAN + HISPANIC + BMI + change_BMI + 
+    EGFR + change_EGFR + DIABETES + CHF
+> print( step(model_SYSTOLIC_SIG_LOWER_0, scope=list(lower=~1, upper=f), direction="forward")  )
+Start:  AIC=14595.42
+SYSTOLIC_SIG_LOWER ~ 1
+
+              Df Deviance   AIC
++ CHF          1   5587.1 14588
++ BLACK        1   5588.0 14589
++ WHITE        1   5591.0 14592
++ EGFR         1   5591.9 14592
++ change_BMI   1   5592.1 14592
++ change_EGFR  1   5592.8 14593
++ DIABETES     1   5593.7 14594
++ BMI          1   5594.4 14594
+<none>             5597.8 14595
++ HISPANIC     1   5597.0 14597
++ AGE          1   5597.7 14597
++ SEX          1   5597.7 14597
++ ASIAN        1   5597.8 14597
+
+Step:  AIC=14588.04
+SYSTOLIC_SIG_LOWER ~ CHF
+
+              Df Deviance   AIC
++ BLACK        1   5578.2 14582
++ WHITE        1   5580.9 14585
++ change_BMI   1   5581.5 14585
++ change_EGFR  1   5582.4 14586
++ EGFR         1   5583.2 14587
++ BMI          1   5583.9 14587
++ DIABETES     1   5584.3 14588
+<none>             5587.1 14588
++ HISPANIC     1   5586.2 14589
++ AGE          1   5587.1 14590
++ SEX          1   5587.1 14590
++ ASIAN        1   5587.1 14590
+
+Step:  AIC=14582.2
+SYSTOLIC_SIG_LOWER ~ CHF + BLACK
+
+              Df Deviance   AIC
++ EGFR         1   5572.1 14579
++ change_BMI   1   5572.7 14579
++ change_EGFR  1   5573.6 14580
++ BMI          1   5575.1 14582
+<none>             5578.2 14582
++ DIABETES     1   5576.3 14583
++ WHITE        1   5577.4 14584
++ HISPANIC     1   5577.5 14584
++ SEX          1   5577.9 14584
++ AGE          1   5578.1 14584
++ ASIAN        1   5578.1 14584
+
+Step:  AIC=14578.81
+SYSTOLIC_SIG_LOWER ~ CHF + BLACK + EGFR
+
+              Df Deviance   AIC
++ change_EGFR  1   5561.5 14572
++ change_BMI   1   5566.5 14576
++ BMI          1   5569.0 14578
+<none>             5572.1 14579
++ DIABETES     1   5570.4 14579
++ AGE          1   5571.4 14580
++ SEX          1   5571.5 14580
++ HISPANIC     1   5571.5 14580
++ WHITE        1   5571.6 14580
++ ASIAN        1   5571.9 14581
+
+Step:  AIC=14571.48
+SYSTOLIC_SIG_LOWER ~ CHF + BLACK + EGFR + change_EGFR
+
+             Df Deviance   AIC
++ change_BMI  1   5556.1 14569
++ BMI         1   5558.6 14571
+<none>            5561.5 14572
++ AGE         1   5559.6 14572
++ DIABETES    1   5560.3 14572
++ SEX         1   5560.8 14573
++ HISPANIC    1   5561.1 14573
++ WHITE       1   5561.2 14573
++ ASIAN       1   5561.3 14573
+
+Step:  AIC=14568.7
+SYSTOLIC_SIG_LOWER ~ CHF + BLACK + EGFR + change_EGFR + change_BMI
+
+           Df Deviance   AIC
+<none>          5556.1 14569
++ BMI       1   5553.9 14569
++ AGE       1   5554.3 14569
++ DIABETES  1   5555.0 14570
++ SEX       1   5555.3 14570
++ HISPANIC  1   5555.6 14570
++ WHITE     1   5555.8 14570
++ ASIAN     1   5555.9 14570
+
+Call:  glm(formula = SYSTOLIC_SIG_LOWER ~ CHF + BLACK + EGFR + change_EGFR + 
+    change_BMI, family = gaussian, data = data0_removeMissing)
+
+Coefficients:
+(Intercept)          CHF        BLACK         EGFR  change_EGFR   change_BMI  
+    0.05622      0.03317      0.04958     -0.05374     -0.04816     -0.03070  
+
+Degrees of Freedom: 4916 Total (i.e. Null);  4911 Residual
+Null Deviance:	    5598 
+Residual Deviance: 5556 	AIC: 14570
+> 
+> (f <- as.formula(paste("~", paste(names(coef(model_DIASTOLIC_SIG_LOWER_1))[-1], collapse="+"))))
+~AGE + SEX + WHITE + BLACK + ASIAN + HISPANIC + BMI + change_BMI + 
+    EGFR + change_EGFR + DIABETES + CHF
+> print( step(model_DIASTOLIC_SIG_LOWER_0, scope=list(lower=~1, upper=f), direction="forward")  )
+Start:  AIC=14605.3
+DIASTOLIC_SIG_LOWER ~ 1
+
+              Df Deviance   AIC
++ CHF          1   5579.9 14582
++ AGE          1   5587.0 14588
++ EGFR         1   5587.3 14588
++ change_EGFR  1   5602.7 14602
++ DIABETES     1   5605.1 14604
++ change_BMI   1   5606.5 14605
++ BLACK        1   5606.7 14605
+<none>             5609.0 14605
++ HISPANIC     1   5607.5 14606
++ WHITE        1   5607.7 14606
++ ASIAN        1   5608.8 14607
++ BMI          1   5608.9 14607
++ SEX          1   5608.9 14607
+
+Step:  AIC=14581.75
+DIASTOLIC_SIG_LOWER ~ CHF
+
+              Df Deviance   AIC
++ EGFR         1   5564.4 14570
++ AGE          1   5564.5 14570
++ change_EGFR  1   5574.1 14579
++ change_BMI   1   5577.4 14582
+<none>             5579.9 14582
++ DIABETES     1   5578.0 14582
++ BLACK        1   5578.2 14582
++ HISPANIC     1   5578.3 14582
++ WHITE        1   5579.1 14583
++ ASIAN        1   5579.8 14584
++ SEX          1   5579.8 14584
++ BMI          1   5579.9 14584
+
+Step:  AIC=14570.01
+DIASTOLIC_SIG_LOWER ~ CHF + EGFR
+
+              Df Deviance   AIC
++ change_EGFR  1   5547.7 14557
++ AGE          1   5558.1 14566
++ BLACK        1   5560.6 14569
++ WHITE        1   5561.7 14570
++ change_BMI   1   5561.8 14570
+<none>             5564.4 14570
++ DIABETES     1   5562.5 14570
++ HISPANIC     1   5563.1 14571
++ BMI          1   5564.3 14572
++ ASIAN        1   5564.3 14572
++ SEX          1   5564.4 14572
+
+Step:  AIC=14557.23
+DIASTOLIC_SIG_LOWER ~ CHF + EGFR + change_EGFR
+
+             Df Deviance   AIC
++ BLACK       1   5543.0 14555
++ WHITE       1   5544.0 14556
++ AGE         1   5544.3 14556
++ change_BMI  1   5545.2 14557
+<none>            5547.7 14557
++ DIABETES    1   5546.4 14558
++ HISPANIC    1   5546.6 14558
++ BMI         1   5547.7 14559
++ SEX         1   5547.7 14559
++ ASIAN       1   5547.7 14559
+
+Step:  AIC=14555.05
+DIASTOLIC_SIG_LOWER ~ CHF + EGFR + change_EGFR + BLACK
+
+             Df Deviance   AIC
++ AGE         1   5538.9 14553
++ change_BMI  1   5540.5 14555
+<none>            5543.0 14555
++ HISPANIC    1   5542.0 14556
++ DIABETES    1   5542.2 14556
++ SEX         1   5542.8 14557
++ WHITE       1   5542.9 14557
++ BMI         1   5542.9 14557
++ ASIAN       1   5543.0 14557
+
+Step:  AIC=14553.41
+DIASTOLIC_SIG_LOWER ~ CHF + EGFR + change_EGFR + BLACK + AGE
+
+             Df Deviance   AIC
++ change_BMI  1   5536.4 14553
+<none>            5538.9 14553
++ HISPANIC    1   5537.9 14555
++ DIABETES    1   5538.1 14555
++ SEX         1   5538.7 14555
++ WHITE       1   5538.8 14555
++ BMI         1   5538.8 14555
++ ASIAN       1   5538.9 14555
+
+Step:  AIC=14553.18
+DIASTOLIC_SIG_LOWER ~ CHF + EGFR + change_EGFR + BLACK + AGE + 
+    change_BMI
+
+           Df Deviance   AIC
+<none>          5536.4 14553
++ HISPANIC  1   5535.4 14554
++ DIABETES  1   5535.6 14554
++ SEX       1   5536.2 14555
++ WHITE     1   5536.3 14555
++ ASIAN     1   5536.4 14555
++ BMI       1   5536.4 14555
+
+Call:  glm(formula = DIASTOLIC_SIG_LOWER ~ CHF + EGFR + change_EGFR + 
+    BLACK + AGE + change_BMI, family = gaussian, data = data0_removeMissing)
+
+Coefficients:
+(Intercept)          CHF         EGFR  change_EGFR        BLACK          AGE  
+    0.05883      0.05511     -0.06876     -0.05718      0.03316      0.03484  
+ change_BMI  
+   -0.02089  
+
+Degrees of Freedom: 4916 Total (i.e. Null);  4910 Residual
+Null Deviance:	    5609 
+Residual Deviance: 5536 	AIC: 14550
+> 
+> (f <- as.formula(paste("~", paste(names(coef(model_MAP_SIG_LOWER_1))[-1], collapse="+"))))
+~AGE + SEX + WHITE + BLACK + ASIAN + HISPANIC + BMI + change_BMI + 
+    EGFR + change_EGFR + DIABETES + CHF
+> print( step(model_MAP_SIG_LOWER_0, scope=list(lower=~1, upper=f), direction="forward")  )
+Start:  AIC=14595.51
+MAP_SIG_LOWER ~ 1
+
+              Df Deviance   AIC
++ CHF          1   5574.6 14577
++ EGFR         1   5589.0 14590
++ change_EGFR  1   5591.3 14592
++ AGE          1   5591.4 14592
++ BLACK        1   5592.8 14593
++ change_BMI   1   5593.3 14594
++ DIABETES     1   5594.2 14594
++ WHITE        1   5594.8 14595
+<none>             5597.9 14596
++ BMI          1   5596.3 14596
++ HISPANIC     1   5597.1 14597
++ SEX          1   5597.3 14597
++ ASIAN        1   5597.5 14597
+
+Step:  AIC=14577.07
+MAP_SIG_LOWER ~ CHF
+
+              Df Deviance   AIC
++ change_EGFR  1   5568.5 14574
++ EGFR         1   5569.2 14574
++ change_BMI   1   5570.1 14575
++ BLACK        1   5570.5 14575
++ AGE          1   5571.3 14576
++ WHITE        1   5572.2 14577
+<none>             5574.6 14577
++ DIABETES     1   5572.6 14577
++ BMI          1   5573.3 14578
++ HISPANIC     1   5573.8 14578
++ SEX          1   5574.1 14579
++ ASIAN        1   5574.4 14579
+
+Step:  AIC=14573.65
+MAP_SIG_LOWER ~ CHF + change_EGFR
+
+             Df Deviance   AIC
++ EGFR        1   5556.8 14565
++ change_BMI  1   5564.1 14572
++ BLACK       1   5564.4 14572
++ AGE         1   5565.1 14573
++ WHITE       1   5566.0 14574
+<none>            5568.5 14574
++ DIABETES    1   5566.9 14574
++ BMI         1   5567.2 14574
++ HISPANIC    1   5567.6 14575
++ SEX         1   5567.9 14575
++ ASIAN       1   5568.2 14575
+
+Step:  AIC=14565.27
+MAP_SIG_LOWER ~ CHF + change_EGFR + EGFR
+
+             Df Deviance   AIC
++ BLACK       1   5549.9 14561
++ WHITE       1   5551.7 14563
++ change_BMI  1   5552.3 14563
+<none>            5556.8 14565
++ DIABETES    1   5555.4 14566
++ BMI         1   5555.5 14566
++ HISPANIC    1   5556.2 14567
++ SEX         1   5556.5 14567
++ AGE         1   5556.6 14567
++ ASIAN       1   5556.7 14567
+
+Step:  AIC=14561.18
+MAP_SIG_LOWER ~ CHF + change_EGFR + EGFR + BLACK
+
+             Df Deviance   AIC
++ change_BMI  1   5545.6 14559
+<none>            5549.9 14561
++ BMI         1   5548.7 14562
++ DIABETES    1   5549.1 14562
++ HISPANIC    1   5549.4 14563
++ WHITE       1   5549.5 14563
++ AGE         1   5549.6 14563
++ ASIAN       1   5549.9 14563
++ SEX         1   5549.9 14563
+
+Step:  AIC=14559.35
+MAP_SIG_LOWER ~ CHF + change_EGFR + EGFR + BLACK + change_BMI
+
+           Df Deviance   AIC
+<none>          5545.6 14559
++ BMI       1   5544.8 14561
++ DIABETES  1   5544.8 14561
++ HISPANIC  1   5545.1 14561
++ AGE       1   5545.2 14561
++ WHITE     1   5545.2 14561
++ ASIAN     1   5545.5 14561
++ SEX       1   5545.5 14561
+
+Call:  glm(formula = MAP_SIG_LOWER ~ CHF + change_EGFR + EGFR + BLACK + 
+    change_BMI, family = gaussian, data = data0_removeMissing)
+
+Coefficients:
+(Intercept)          CHF  change_EGFR         EGFR        BLACK   change_BMI  
+    0.06478      0.05329     -0.05443     -0.05896      0.03711     -0.02747  
+
+Degrees of Freedom: 4916 Total (i.e. Null);  4911 Residual
+Null Deviance:	    5598 
+Residual Deviance: 5546 	AIC: 14560
+> 
+> 
+> 
+> proc.time()
+   user  system elapsed 
+  4.419   0.344   4.811 
