@@ -162,8 +162,8 @@ for dz in data_BP_stratComorbid:
             ks_SBP_OOC = np.append(ks_SBP_OOC, ks_2samp_SBP)
             ks_DBP_OOC = np.append(ks_DBP_OOC, ks_2samp_DBP)
             ks_pvals_SYSTOLIC[dz][ruid] = ks_2samp_SBP[1]
-            ks_pvals_DIASTOLIC[dz][ruid] = ks_2samp_SBP[1]
-            ks_pvals_MAP[dz][ruid] = ks_2samp_SBP[1]
+            ks_pvals_DIASTOLIC[dz][ruid] = ks_2samp_DBP[1]
+            ks_pvals_MAP[dz][ruid] = ks_2samp_MAP[1]
             
     ######
     ks_MAP_IC = ks_MAP_IC.reshape(len(ks_MAP_IC)/2, 2)

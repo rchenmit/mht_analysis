@@ -12,6 +12,12 @@ def convert_dtdays_to_years(x):
     else:
         return x
 
+def convert_to_1_if_positive(x, pos_label):
+    if x == pos_label:
+        return 1
+    else:
+        return 0
+
 ## options
 input_folder = '../../data/new_data_20140416/Data_20140409/'
 output_dir = '../analysis_output/'
@@ -28,12 +34,19 @@ df_Phenotype['ENROLL_DATE'] = pd.to_datetime(df_Phenotype['ENROLL_DATE']).astype
 df_Phenotype['DOB'] = pd.to_datetime(df_Phenotype['DOB']).astype(dt.datetime)
 df_Phenotype['DOD'] = pd.to_datetime(df_Phenotype['DOD']).astype(dt.datetime)
 
+#new columns for specific races: white, black, asian, hispanic
+df_Phenotype['WHITE'] = df_Phenotype['RACE'].apply(lambda x: convert_to_1_if_positive(x, 3)) # value of 3 in RACE column means white
+df_Phenotype['BLACK'] = df_Phenotype['RACE'].apply(lambda x: convert_to_1_if_positive(x, 0)) # value of 0 in RACE column means black
+df_Phenotype['ASIAN'] = df_Phenotype['RACE'].apply(lambda x: convert_to_1_if_positive(x, 2)) # value of 2 in RACE column means asian
+df_Phenotype['HISPANIC'] = df_Phenotype['ETHNICITY'].apply(lambda x: convert_to_1_if_positive(x, 1)) # value of 2 in RACE column means asian
+
 
 ## new columns for age AT ENGAGE_DATE
 df_Phenotype['AGE_ENGAGE'] = (df_Phenotype['ENGAGE_DATE'] - df_Phenotype['DOB']).astype(dt.timedelta)
 df_Phenotype['AGE_DEATH'] = (df_Phenotype['DOD'] - df_Phenotype['DOB']).astype(dt.timedelta)
 df_Phenotype['AGE_ENGAGE'] = df_Phenotype['AGE_ENGAGE'].apply(lambda x:  convert_dtdays_to_years(x) )
 df_Phenotype['AGE_DEATH'] = df_Phenotype['AGE_DEATH'].apply(lambda x:  convert_dtdays_to_years(x) )
+
 
 
 

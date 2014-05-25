@@ -9,6 +9,14 @@
 
 output_dir = '../../data/new_data_20140416/Data_curated_RC/'
 
+
+## function used in this script
+def convert_to_1_if_positive(x, pos_label):
+    if x == pos_label:
+        return 1
+    else:
+        return 0
+
 ## build dataframes for BP before/after ####################################################################################
 
 #predominant conrol status
@@ -62,6 +70,13 @@ df_BP_MEDIAN_BEFORE_AFTER_CHANGE = pd.merge(df_BP_MEDIAN_BEFORE_AFTER_CHANGE, pd
 df_BP_MEDIAN_BEFORE_AFTER_CHANGE = pd.merge(df_BP_MEDIAN_BEFORE_AFTER_CHANGE, pd.DataFrame(ks_pvals_SYSTOLIC['HTN'].items(), columns=['RUID', 'P_KS_SYSTOLIC']), left_on = 'RUID', right_on = 'RUID', how = 'outer')
 df_BP_MEDIAN_BEFORE_AFTER_CHANGE = pd.merge(df_BP_MEDIAN_BEFORE_AFTER_CHANGE, pd.DataFrame(ks_pvals_DIASTOLIC['HTN'].items(), columns=['RUID', 'P_KS_DIASTOLIC']), left_on = 'RUID', right_on = 'RUID', how = 'outer')
 df_BP_MEDIAN_BEFORE_AFTER_CHANGE = pd.merge(df_BP_MEDIAN_BEFORE_AFTER_CHANGE, pd.DataFrame(ks_pvals_MAP['HTN'].items(), columns=['RUID', 'P_KS_MAP']), left_on = 'RUID', right_on = 'RUID', how = 'outer')
+#add binary for signifcant KS test AND LOWER BP
+df_BP_MEDIAN_BEFORE_AFTER_CHANGE['KS_SYSTOLIC_SIG_LOWER'] = (df_BP_MEDIAN_BEFORE_AFTER_CHANGE['P_KS_SYSTOLIC'] < 0.05) & (df_BP_MEDIAN_BEFORE_AFTER_CHANGE['MEDIAN_SYSTOLIC_CHANGE'] < 0)
+df_BP_MEDIAN_BEFORE_AFTER_CHANGE['KS_DIASTOLIC_SIG_LOWER'] = (df_BP_MEDIAN_BEFORE_AFTER_CHANGE['P_KS_DIASTOLIC'] < 0.05) & (df_BP_MEDIAN_BEFORE_AFTER_CHANGE['MEDIAN_DIASTOLIC_CHANGE'] < 0)
+df_BP_MEDIAN_BEFORE_AFTER_CHANGE['KS_MAP_SIG_LOWER'] = (df_BP_MEDIAN_BEFORE_AFTER_CHANGE['P_KS_MAP'] < 0.05) & (df_BP_MEDIAN_BEFORE_AFTER_CHANGE['MEDIAN_MAP_CHANGE'] < 0)
+df_BP_MEDIAN_BEFORE_AFTER_CHANGE['KS_SYSTOLIC_SIG_LOWER'] = df_BP_MEDIAN_BEFORE_AFTER_CHANGE['KS_SYSTOLIC_SIG_LOWER'].apply(lambda x: convert_to_1_if_positive(x, True))
+df_BP_MEDIAN_BEFORE_AFTER_CHANGE['KS_DIASTOLIC_SIG_LOWER'] = df_BP_MEDIAN_BEFORE_AFTER_CHANGE['KS_DIASTOLIC_SIG_LOWER'].apply(lambda x: convert_to_1_if_positive(x, True))
+df_BP_MEDIAN_BEFORE_AFTER_CHANGE['KS_MAP_SIG_LOWER'] = df_BP_MEDIAN_BEFORE_AFTER_CHANGE['KS_MAP_SIG_LOWER'].apply(lambda x: convert_to_1_if_positive(x, True))
 
 
 ## gather data for training examples / features ####################################################################################
@@ -76,6 +91,9 @@ df_BPSTATUS_Phenotype_BMI_ECG_EGFR = pd.merge(df_BP_STATUS, df_Phenotype_BMI_ECG
 # big dataframe with BP's
 df_BPSTATUS_Phenotype_BMI_ECG_EGFR_BPCHANGE = pd.merge(df_BPSTATUS_Phenotype_BMI_ECG_EGFR, df_BP_MEDIAN_BEFORE_AFTER_CHANGE, left_on = 'RUID', right_on = 'RUID', how = 'outer')
 
+#adding in ICD codes
+df_BPSTATUS_Phenotype_BMI_ECG_EGFR_BPCHANGE_ICD = pd.merge(df_BPSTATUS_Phenotype_BMI_ECG_EGFR_BPCHANGE, df_ICD_counts, left_on = 'RUID', right_on = 'RUID', how = 'outer')
+
 #write file 
 df_BPSTATUS_Phenotype_BMI_ECG_EGFR_BPCHANGE.to_csv( output_dir + 'df_BPSTATUS_Phenotype_BMI_ECG_EGFR_BPCHANGE.csv', index = False)
-
+df_BPSTATUS_Phenotype_BMI_ECG_EGFR_BPCHANGE_ICD.to_csv( output_dir + 'df_BPSTATUS_Phenotype_BMI_ECG_EGFR_BPCHANGE_ICD.csv', index = False)

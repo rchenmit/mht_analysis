@@ -128,8 +128,8 @@ for ruid in l_pt_ruid_CLINICIAN_IN_CONTROL:
             ks_SBP_IC = np.append(ks_SBP_IC, ks_2samp_SBP)
             ks_DBP_IC = np.append(ks_DBP_IC, ks_2samp_DBP)
             ks_pvals_SYSTOLIC['HTN'][ruid] = ks_2samp_SBP[1]
-            ks_pvals_DIASTOLIC['HTN'][ruid] = ks_2samp_SBP[1]
-            ks_pvals_MAP['HTN'][ruid] = ks_2samp_SBP[1]
+            ks_pvals_DIASTOLIC['HTN'][ruid] = ks_2samp_DBP[1]
+            ks_pvals_MAP['HTN'][ruid] = ks_2samp_MAP[1]
 
 for ruid in l_pt_ruid_CLINICIAN_OUT_CONTROL:
     if ruid in d_bp_before_after_MHT['BEFORE'] and not np.isnan(d_bp_before_after_MHT['BEFORE'][ruid]['MAP']) and not np.isnan(d_bp_before_after_MHT['AFTER'][ruid]['MAP']):
@@ -154,8 +154,8 @@ for ruid in l_pt_ruid_CLINICIAN_OUT_CONTROL:
             ks_SBP_OOC = np.append(ks_SBP_OOC, ks_2samp_SBP)
             ks_DBP_OOC = np.append(ks_DBP_OOC, ks_2samp_DBP)
             ks_pvals_SYSTOLIC['HTN'][ruid] = ks_2samp_SBP[1]
-            ks_pvals_DIASTOLIC['HTN'][ruid] = ks_2samp_SBP[1]
-            ks_pvals_MAP['HTN'][ruid] = ks_2samp_SBP[1]
+            ks_pvals_DIASTOLIC['HTN'][ruid] = ks_2samp_DBP[1]
+            ks_pvals_MAP['HTN'][ruid] = ks_2samp_MAP[1]
             
 
 ks_MAP_IC = ks_MAP_IC.reshape(len(ks_MAP_IC)/2, 2)
