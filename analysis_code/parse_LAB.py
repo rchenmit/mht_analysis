@@ -13,7 +13,7 @@ output_dir = '../../data/new_data_20140416/Data_curated_RC/'
 ## Prepare data, read data
 filename = input_folder + 'LAB_04082014.csv'
 pd.set_option('display.line_width', 300)
-df_LAB = pd.read_csv(filename, sep=',')
+df_LAB = pd.read_csv(filename, sep=',' , escapechar='\\')
 
 df_LAB['LAB_DATE'] = pd.to_datetime(df_LAB['LAB_DATE'])
 

@@ -25,6 +25,7 @@ df_sample_Phenotype = df_Phenotype[df_Phenotype['RUID'].isin(all_sample_ruid)]
 df_sample_BP = df_BP[df_BP['RUID'].isin(all_sample_ruid)]
 df_sample_ICD = df_ICD[df_ICD['RUID'].isin(all_sample_ruid)]
 df_sample_CPT = df_CPT[df_CPT['RUID'].isin(all_sample_ruid)]
+df_sample_LAB = df_LAB[df_LAB['RUID'].isin(all_sample_ruid)]
 
 #write dataframes to CSV files
 df_sample_DM_status.to_csv( output_dir + 'df_sample_DM_status.csv', index = False )
@@ -34,3 +35,4 @@ df_sample_Phenotype.to_csv( output_dir + 'df_sample_Phenotype.csv', index = Fals
 df_sample_BP.to_csv( output_dir + 'df_sample_BP.csv', index = False)
 df_sample_ICD.to_csv( output_dir + 'df_sample_ICD.csv', index = False)
 df_sample_CPT.to_csv( output_dir + 'df_sample_CPT.csv', index = False)
+df_sample_LAB.to_csv( output_dir + 'df_sample_LAB.csv', index = False)
