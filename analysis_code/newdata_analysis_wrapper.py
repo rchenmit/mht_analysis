@@ -71,7 +71,7 @@ if not bool_initial_run:
     execfile('parse_EGFR.py')
     execfile('parse_MHT_STRATEGY.py')
     execfile('parse_BP.py')
-#    execfile('parse_ICD.py')
+    execfile('parse_ICD.py')
     execfile('parse_CPT.py')
     execfile('newdata_make_list_pts_IN_OUT.py')
     execfile('./KS_2samp_test_before_after_MHT.py')
