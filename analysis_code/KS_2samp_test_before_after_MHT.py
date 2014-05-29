@@ -44,13 +44,14 @@ for key in l_keys_bp_clinician:
         condition_before_time_window = (df_bp_this_pt.MEASURE_DATE < date_mht_engage_date) & (df_bp_this_pt.MEASURE_DATE > date_2_yr_before)
         condition_after_time_window = (df_bp_this_pt.MEASURE_DATE > date_mht_engage_date) 
         num_dates_record = len(  pd.Series(df_bp_this_pt.loc[condition_before_time_window].MEASURE_DATE.unique()) ) 
+        bool_keep_this_pt = num_dates_record > 10 and (max(df_bp_this_pt.loc[condition_before_time_window].MEASURE_DATE) - min(df_bp_this_pt.loc[condition_before_time_window].MEASURE_DATE) ) > datetime.timedelta(days = 180)
 
-        median_systolic_before = np.median(df_bp_this_pt.loc[condition_before_time_window]['SYSTOLIC']) if num_dates_record > 10 else np.nan
-        median_diastolic_before = np.median(df_bp_this_pt.loc[condition_before_time_window]['DIASTOLIC']) if num_dates_record > 10 else np.nan
-        median_MAP_before = np.median(df_bp_this_pt.loc[condition_before_time_window]['MAP']) if num_dates_record > 10 else np.nan
-        median_systolic_after = np.median(df_bp_this_pt.loc[condition_after_time_window]['SYSTOLIC']) if num_dates_record > 10 else np.nan
-        median_diastolic_after = np.median(df_bp_this_pt.loc[condition_after_time_window]['DIASTOLIC']) if num_dates_record > 10 else np.nan
-        median_MAP_after = np.median(df_bp_this_pt.loc[condition_after_time_window]['MAP']) if num_dates_record > 10 else np.nan
+        median_systolic_before = np.median(df_bp_this_pt.loc[condition_before_time_window]['SYSTOLIC']) if bool_keep_this_pt else np.nan
+        median_diastolic_before = np.median(df_bp_this_pt.loc[condition_before_time_window]['DIASTOLIC']) if bool_keep_this_pt else np.nan
+        median_MAP_before = np.median(df_bp_this_pt.loc[condition_before_time_window]['MAP']) if bool_keep_this_pt else np.nan
+        median_systolic_after = np.median(df_bp_this_pt.loc[condition_after_time_window]['SYSTOLIC']) if bool_keep_this_pt else np.nan
+        median_diastolic_after = np.median(df_bp_this_pt.loc[condition_after_time_window]['DIASTOLIC']) if bool_keep_this_pt else np.nan
+        median_MAP_after = np.median(df_bp_this_pt.loc[condition_after_time_window]['MAP']) if bool_keep_this_pt else np.nan
 
 
         l_this_pt_MAP_before = list(df_bp_this_pt.loc[condition_before_time_window]['MAP']) 
