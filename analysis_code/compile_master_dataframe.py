@@ -92,8 +92,12 @@ df_BPSTATUS_Phenotype_BMI_ECG_EGFR = pd.merge(df_BP_STATUS, df_Phenotype_BMI_ECG
 df_BPSTATUS_Phenotype_BMI_ECG_EGFR_BPCHANGE = pd.merge(df_BPSTATUS_Phenotype_BMI_ECG_EGFR, df_BP_MEDIAN_BEFORE_AFTER_CHANGE, left_on = 'RUID', right_on = 'RUID', how = 'outer')
 
 #adding in ICD codes
-df_BPSTATUS_Phenotype_BMI_ECG_EGFR_BPCHANGE_ICD = pd.merge(df_BPSTATUS_Phenotype_BMI_ECG_EGFR_BPCHANGE, df_ICD_counts, left_on = 'RUID', right_on = 'RUID', how = 'outer')
+##df_BPSTATUS_Phenotype_BMI_ECG_EGFR_BPCHANGE_ICD = pd.merge(df_BPSTATUS_Phenotype_BMI_ECG_EGFR_BPCHANGE, df_ICD_counts, left_on = 'RUID', right_on = 'RUID', how = 'outer')
+df_BPSTATUS_Phenotype_BMI_ECG_EGFR_BPCHANGE_JD = pd.merge(df_BPSTATUS_Phenotype_BMI_ECG_EGFR_BPCHANGE, df_JD_counts, left_on = 'RUID', right_on = 'RUID', how = 'outer')
+df_BPSTATUS_Phenotype_BMI_ECG_EGFR_BPCHANGE_JD_RANGE = pd.merge(df_BPSTATUS_Phenotype_BMI_ECG_EGFR_BPCHANGE, df_JD_RANGE_counts, left_on = 'RUID', right_on = 'RUID', how = 'outer')
+
 
 #write file 
 df_BPSTATUS_Phenotype_BMI_ECG_EGFR_BPCHANGE.to_csv( output_dir + 'df_BPSTATUS_Phenotype_BMI_ECG_EGFR_BPCHANGE.csv', index = False)
-df_BPSTATUS_Phenotype_BMI_ECG_EGFR_BPCHANGE_ICD.to_csv( output_dir + 'df_BPSTATUS_Phenotype_BMI_ECG_EGFR_BPCHANGE_ICD.csv', index = False)
+df_BPSTATUS_Phenotype_BMI_ECG_EGFR_BPCHANGE_JD.to_csv( output_dir + 'df_BPSTATUS_Phenotype_BMI_ECG_EGFR_BPCHANGE_JD.csv', index = False)
+df_BPSTATUS_Phenotype_BMI_ECG_EGFR_BPCHANGE_JD_RANGE.to_csv( output_dir + 'df_BPSTATUS_Phenotype_BMI_ECG_EGFR_BPCHANGE_JD_RANGE.csv', index = False)

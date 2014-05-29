@@ -14,6 +14,10 @@ print("running ./KS_2samp_test_before_after_MHT_stratComorbid.py")
 output_dir = '../analysis_output/'
 output_file = output_dir + 'KS_2samp_test_before_after_MHT_stratComorbid.out'
 fstream = open(output_file,'a')
+pickle_dir = '../analysis_output/pickle/'
+
+## list of RUID for recorded BP's
+l_keys_bp_record = list(df_BP['RUID'].unique()) 
 
 ## calculate before/after MAP's for all pts in MHT
 data_BP_stratComorbid = dict()
@@ -32,32 +36,32 @@ for dz in data_BP_stratComorbid:
     d_list_pressures_before_after['BEFORE'] = dict()
     d_list_pressures_before_after['AFTER'] = dict()
     for key in d_other_diag_pt_level_clinician[dz]:
-        if key in d_bp_record and key in d_bp_clinician:
-            df_bp_this_pt = d_bp_record[key]
-            df_bp_this_pt['MAP'] = 1/float(3)*df_bp_this_pt['SYSTOLIC'] + 2/float(3)*df_bp_this_pt['DIASTOLIC']
-            df_bp_this_pt = df_bp_this_pt.sort_index()
-            date_mht_first_record = min(d_bp_clinician[key].index).date()
+        if key in l_keys_bp_record and key in d_bp_clinician:
+            df_bp_this_pt = df_BP[df_BP['RUID']==key]
+            df_bp_this_pt = df_bp_this_pt.sort(['MEASURE_DATE'],ascending= [1])
+            date_mht_first_record =  min(d_bp_clinician[key].index).date()  
             date_mht_engage_date = df_Phenotype[df_Phenotype['RUID'] == key]['ENGAGE_DATE'].values[0].date()
             date_1_yr_before = date_mht_engage_date - datetime.timedelta(360*1)
             date_2_yr_before = date_mht_engage_date - datetime.timedelta(360*2)
             date_3_yr_before = date_mht_engage_date - datetime.timedelta(360*3)
-
-            condition_before_time_window = (df_bp_this_pt.index.date < date_mht_engage_date) & (df_bp_this_pt.index.date > date_2_yr_before)
-
             
-            median_systolic_before = np.median(df_bp_this_pt.loc[condition_before_time_window]['SYSTOLIC'])
-            median_diastolic_before = np.median(df_bp_this_pt.loc[condition_before_time_window]['DIASTOLIC'])
-            median_MAP_before = np.median(df_bp_this_pt.loc[condition_before_time_window]['MAP'])
-            median_systolic_after = np.median(df_bp_this_pt.loc[df_bp_this_pt.index.date > date_mht_engage_date]['SYSTOLIC'])
-            median_diastolic_after = np.median(df_bp_this_pt.loc[df_bp_this_pt.index.date > date_mht_engage_date]['DIASTOLIC'])
-            median_MAP_after = np.median(df_bp_this_pt.loc[df_bp_this_pt.index.date > date_mht_engage_date]['MAP'])#
+            condition_before_time_window = (df_bp_this_pt.MEASURE_DATE < date_mht_engage_date) & (df_bp_this_pt.MEASURE_DATE > date_2_yr_before)
+            condition_after_time_window = (df_bp_this_pt.MEASURE_DATE > date_mht_engage_date)
+            num_dates_record = len(  pd.Series(df_bp_this_pt.loc[condition_before_time_window].MEASURE_DATE.unique()) )
+            
+            median_systolic_before = np.median(df_bp_this_pt.loc[condition_before_time_window]['SYSTOLIC']) if num_dates_record > 10 else np.nan
+            median_diastolic_before = np.median(df_bp_this_pt.loc[condition_before_time_window]['DIASTOLIC']) if num_dates_record > 10 else np.nan
+            median_MAP_before = np.median(df_bp_this_pt.loc[condition_before_time_window]['MAP']) if num_dates_record > 10 else np.nan
+            median_systolic_after = np.median(df_bp_this_pt.loc[condition_after_time_window]['SYSTOLIC']) if num_dates_record > 10 else np.nan
+            median_diastolic_after = np.median(df_bp_this_pt.loc[condition_after_time_window]['DIASTOLIC']) if num_dates_record > 10 else np.nan
+            median_MAP_after = np.median(df_bp_this_pt.loc[condition_after_time_window]['MAP'])#
 
             l_this_pt_MAP_before = list(df_bp_this_pt.loc[condition_before_time_window]['MAP'])
-            l_this_pt_MAP_after =  list(df_bp_this_pt.loc[df_bp_this_pt.index.date > date_mht_engage_date]['MAP'])
+            l_this_pt_MAP_after =  list(df_bp_this_pt.loc[condition_after_time_window]['MAP'])
             l_this_pt_SYSTOLIC_before = list(df_bp_this_pt.loc[condition_before_time_window]['SYSTOLIC'])
-            l_this_pt_SYSTOLIC_after =  list(df_bp_this_pt.loc[df_bp_this_pt.index.date > date_mht_engage_date]['SYSTOLIC'])
+            l_this_pt_SYSTOLIC_after =  list(df_bp_this_pt.loc[condition_after_time_window]['SYSTOLIC'])
             l_this_pt_DIASTOLIC_before = list(df_bp_this_pt.loc[condition_before_time_window]['DIASTOLIC'])
-            l_this_pt_DIASTOLIC_after =  list(df_bp_this_pt.loc[df_bp_this_pt.index.date > date_mht_engage_date]['DIASTOLIC'])#
+            l_this_pt_DIASTOLIC_after =  list(df_bp_this_pt.loc[condition_after_time_window]['DIASTOLIC'])#
     
             d_bp_before_after_MHT_thisComorbid['BEFORE'][key] = dict()
             d_bp_before_after_MHT_thisComorbid['AFTER'][key] = dict()
@@ -460,7 +464,7 @@ for dz in data_BP_stratComorbid:
     ax1.set_xlim(0.5, numBoxes+0.5)
     top = max([ max(x) for x in data])/10*10 + 10
     bottom = min([ min(x) for x in data])/10*10 - 10
-    plt.yticks(range(bottom,top, 20))
+    plt.yticks(range(int(bottom),int(top), 20))
     ax1.set_ylim(bottom, top)
     xtickNames = plt.setp(ax1, xticklabels=labels)
     plt.setp(xtickNames, rotation=45, fontsize=8)
@@ -529,4 +533,7 @@ for dz in data_BP_stratComorbid:
     savestr =  output_dir + "plt_strat_" + dz + '_QQplot_KStest_Pval_DBP_IC_OOC.png'
     savefig(savestr)
 
-fstream.close()
+
+with open(pickle_dir + "data_BP_stratComorbid.pickle", "wb") as output_file:
+    pickle.dump(data_BP_stratComorbid, output_file)
+output_file.close()

@@ -15,3 +15,4 @@ pd.set_option('display.line_width', 300)
 df_BP = pd.read_csv(filename, sep=',')
 
 df_BP['MEASURE_DATE'] = pd.to_datetime(df_BP['MEASURE_DATE'])
+df_BP['MAP'] = df_BP['SYSTOLIC']*1/3 + df_BP['DIASTOLIC']*2/3
