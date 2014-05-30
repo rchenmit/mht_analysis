@@ -83,12 +83,12 @@ model_SYSTOLIC_SIG_LOWER_0 <- glm(SYSTOLIC_SIG_LOWER~1, data0_removeMissing , fa
 model_DIASTOLIC_SIG_LOWER_0 <- glm(DIASTOLIC_SIG_LOWER~1, data0_removeMissing , family = gaussian)
 model_MAP_SIG_LOWER_0 <- glm(MAP_SIG_LOWER~1, data0_removeMissing , family = gaussian)
 
-model_SYSTOLIC_1 <- update(model0, SYSTOLIC_CHANGE ~ AGE + SEX + WHITE + BLACK + ASIAN + HISPANIC + BMI + change_BMI + EGFR + change_EGFR + DIABETES + CHF )
-model_DIASTOLIC_1 <- update(model0, DIASTOLIC_CHANGE ~ AGE + SEX + WHITE + BLACK + ASIAN + HISPANIC + BMI + change_BMI + EGFR + change_EGFR + DIABETES + CHF)
-model_MAP_1 <- update(model0, MAP_CHANGE ~ AGE + SEX + WHITE + BLACK + ASIAN + HISPANIC + BMI + change_BMI + EGFR + change_EGFR + DIABETES + CHF )
-model_SYSTOLIC_SIG_LOWER_1 <- update(model0, SYSTOLIC_SIG_LOWER ~ AGE + SEX + WHITE + BLACK + ASIAN + HISPANIC + BMI + change_BMI + EGFR + change_EGFR + DIABETES + CHF )
-model_DIASTOLIC_SIG_LOWER_1 <- update(model0, DIASTOLIC_SIG_LOWER ~ AGE + SEX + WHITE + BLACK + ASIAN + HISPANIC + BMI + change_BMI + EGFR + change_EGFR + DIABETES + CHF )
-model_MAP_SIG_LOWER_1 <- update(model0, MAP_SIG_LOWER ~ AGE + SEX + WHITE + BLACK + ASIAN + HISPANIC + BMI + change_BMI + EGFR + change_EGFR + DIABETES + CHF )
+model_SYSTOLIC_1 <- update(model_SYSTOLIC_0, SYSTOLIC_CHANGE ~ AGE + SEX + WHITE + BLACK + ASIAN + HISPANIC + BMI + change_BMI + EGFR + change_EGFR + DIABETES + CHF )
+model_DIASTOLIC_1 <- update(model_DIASTOLIC_0, DIASTOLIC_CHANGE ~ AGE + SEX + WHITE + BLACK + ASIAN + HISPANIC + BMI + change_BMI + EGFR + change_EGFR + DIABETES + CHF)
+model_MAP_1 <- update(model_MAP_0, MAP_CHANGE ~ AGE + SEX + WHITE + BLACK + ASIAN + HISPANIC + BMI + change_BMI + EGFR + change_EGFR + DIABETES + CHF )
+model_SYSTOLIC_SIG_LOWER_1 <- update(model_SYSTOLIC_SIG_LOWER_0, SYSTOLIC_SIG_LOWER ~ AGE + SEX + WHITE + BLACK + ASIAN + HISPANIC + BMI + change_BMI + EGFR + change_EGFR + DIABETES + CHF )
+model_DIASTOLIC_SIG_LOWER_1 <- update(model_DIASTOLIC_SIG_LOWER_0, DIASTOLIC_SIG_LOWER ~ AGE + SEX + WHITE + BLACK + ASIAN + HISPANIC + BMI + change_BMI + EGFR + change_EGFR + DIABETES + CHF )
+model_MAP_SIG_LOWER_1 <- update(model_MAP_SIG_LOWER_0, MAP_SIG_LOWER ~ AGE + SEX + WHITE + BLACK + ASIAN + HISPANIC + BMI + change_BMI + EGFR + change_EGFR + DIABETES + CHF )
 
 (f <- as.formula(paste("~", paste(names(coef(model_SYSTOLIC_1))[-1], collapse="+"))))
 print( step(model_SYSTOLIC_0, scope=list(lower=~1, upper=f), direction="forward")  )

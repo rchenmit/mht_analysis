@@ -1,0 +1,8 @@
+#!/bin/bash
+
+#R CMD BATCH stepwiseRegression_with_JD_RANGE_SYSTOLIC.R stepwiseRegression_with_JD_RANGE_SYSTOLIC.Rout
+#R CMD BATCH stepwiseRegression_with_JD_RANGE_DIASTOLIC.R stepwiseRegression_with_JD_RANGE_DIASTOLIC.Rout
+#R CMD BATCH stepwiseRegression_with_JD_RANGE_MAP.R stepwiseRegression_with_JD_RANGE_MAP.Rout
+#R CMD BATCH stepwiseRegression_with_JD_RANGE_SYSTOLIC_LOWER.R stepwiseRegression_with_JD_RANGE_SYSTOLIC_LOWER.Rout
+R CMD BATCH stepwiseRegression_with_JD_RANGE_DIASTOLIC_LOWER.R stepwiseRegression_with_JD_RANGE_DIASTOLIC_LOWER.Rout
+R CMD BATCH stepwiseRegression_with_JD_RANGE_MAP_LOWER.R stepwiseRegression_with_JD_RANGE_MAP_LOWER.Rout
