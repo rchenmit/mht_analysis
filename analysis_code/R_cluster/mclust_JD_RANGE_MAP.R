@@ -179,6 +179,8 @@ names(model_cluster)
 
 #binary - target values
 mapsiglower = as.factor(data_for_model_scaled$MAP_SIG_LOWER)
+bool_mapsiglower = data_for_model_scaled$MAP_SIG_LOWER
+
 
 #plot cluster Projection onto first 2 features
 coordProj(cluster_features, parameters=model_cluster$parameters, z = model_cluster$z, what="classification", identify=TRUE, dimens=c(9,4))
