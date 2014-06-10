@@ -20,6 +20,10 @@ data_jd_range <- read.table(jd_range_file, header = T, sep=',', check.names=TRUE
 #change sex to binary numbers
 data['SEX'] = sapply(data['SEX'],function(x) gsub("F",as.integer(0),x))
 data['SEX'] = sapply(data['SEX'],function(x) gsub("M",as.integer(1),x))
+#BP improvement criteria
+data['MAP_DECREASE_2'] = data$MEDIAN_MAP_CHANGE <= -2
+data['MAP_INCREASE_2'] = data$MEDIAN_MAP_CHANGE <= -2
+data['SYSTOLIC_OR_DIASTOLIC_DECREASE_2'] = data$MEDIAN_SYSTOLIC_CHANGE <= -2 | data$MEDIAN_DIASTOLIC_CHANGE <= -2
 
 #replace missing values for icd_file with 0's
 #data_icd[is.na(data_icd)] <- 0
@@ -58,8 +62,14 @@ data0_binary = with(data, data.frame(
 				ASIAN = ASIAN, 
 				HISPANIC = HISPANIC,
 				DIABETES = DM_TX,
-				CHF = CHF_TX
+				CHF = CHF_TX,
+				MAP_DECREASE_2 = (MEDIAN_MAP_CHANGE <= -2)*1,
+				MAP_INCREASE_2 = (MEDIAN_MAP_CHANGE >= 2)*1,
+				SYSTOLIC_OR_DIASTOLIC_DECREASE_2 = (data$MEDIAN_SYSTOLIC_CHANGE <= -2 | data$MEDIAN_DIASTOLIC_CHANGE <= -2)*1
 	))
+
+
+
 data0_binary = transform(data0_binary,
 		SYSTOLIC_DECREASE = as.factor(SYSTOLIC_DECREASE),
 		DIASTOLIC_DECREASE = as.factor(DIASTOLIC_DECREASE),
@@ -73,8 +83,12 @@ data0_binary = transform(data0_binary,
 		ASIAN=as.factor(ASIAN),
 		HISPANIC=as.factor(HISPANIC),
 		DIABETES = as.factor(DIABETES),
-		CHF = as.factor(CHF)
+		CHF = as.factor(CHF),
+		MAP_DECREASE_2 = as.factor(MAP_DECREASE_2),
+		MAP_INCREASE_2 = as.factor(MAP_INCREASE_2),
+		SYSTOLIC_OR_DIASTOLIC_DECREASE_2 = as.factor(SYSTOLIC_OR_DIASTOLIC_DECREASE_2)
 	)
+
 
 
 #transform to numeric

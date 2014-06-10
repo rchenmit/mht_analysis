@@ -17,6 +17,8 @@ s_model_jd_range_features <- paste(names_jd_range, collapse="+")
 s_model_all_features <- paste(c(s_model_BP_prior, s_model_data0_features, s_model_jd_range_features) , collapse="+")
 
 
+
+###########################################################################################
 #null model
 model_MAP_DECREASE_0 <- glm(MAP_DECREASE~1, data_for_model_scaled , family = binomial)
 #formulas for each feature set
@@ -38,6 +40,9 @@ model_MAP_DECREASE_1_JD_only <- update(model_MAP_DECREASE_0, formula_JD_only )
 model_MAP_DECREASE_allfeatures <- step(model_MAP_DECREASE_0, scope=list(lower=~1, upper=f), direction="forward")  	
 model_MAP_DECREASE_data0 <- step(model_MAP_DECREASE_0, scope=list(lower=~1, upper=f_data0), direction="forward")  	
 model_MAP_DECREASE_JD_only <- step(model_MAP_DECREASE_0, scope=list(lower=~1, upper=f_JD_only), direction="forward")  	
+
+############################################################################################
+
 
 ## plot ROC and AUC
 plot.new()
