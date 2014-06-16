@@ -1,0 +1,92 @@
+
+R version 3.1.0 (2014-04-10) -- "Spring Dance"
+Copyright (C) 2014 The R Foundation for Statistical Computing
+Platform: x86_64-apple-darwin13.1.0 (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+[Previously saved workspace restored]
+
+> ## libraries ##########
+> library(pROC)
+Type 'citation("pROC")' for a citation.
+
+Attaching package: 'pROC'
+
+The following objects are masked from 'package:stats':
+
+    cov, smooth, var
+
+> 
+> ## load data ##########
+> rm(list=ls()[-length(ls())])
+> source('../R_data_load/load_data.R')
+> 
+> ## build model ########
+> 
+> 
+> ## features as string
+> s_model_BP_prior <- "MAP_BEFORE"
+> s_model_data0_features <- "AGE + SEX + WHITE + BLACK + ASIAN + HISPANIC + BMI + change_BMI + EGFR + change_EGFR + DIABETES + CHF"
+> names_jd_range <- colnames(data_jd_range_as_datatable)
+> names_jd_range <- names_jd_range[which(names_jd_range!="X401.405.99")][-1] #remove HTN from list of JD_RANGES 
+> s_model_jd_range_features <- paste(names_jd_range, collapse="+")
+> s_model_all_features <- paste(c(s_model_BP_prior, s_model_data0_features, s_model_jd_range_features) , collapse="+")
+> 
+> ###########################################################################################
+> 
+> l_auc_all_folds = c()
+> num_fold = 10
+> cases = subset(data_for_model_scaled, SYSTOLIC_OR_DIASTOLIC_DECREASE_2==1)
+> controls = subset(data_for_model_scaled, SYSTOLIC_OR_DIASTOLIC_DECREASE_2==0)
+> num_cases = dim(cases)[1]
+> num_controls = dim(controls)[1]
+> l_stepwise_features_used = c()
+> 
+> for (i in 1:num_fold) {
++ 	print(paste("start CV fold", i))
++ 	cases_test_sample = sample(1:num_cases, floor(num_cases / num_fold))
++ 	controls_test_sample = sample(1:num_controls, floor(num_controls / num_fold))
++ 	cases_test = cases[cases_test_sample, ]
++ 	controls_test = controls[controls_test_sample, ]
++ 	cases_train= cases[-cases_test_sample,]
++ 	controls_train = controls[-controls_test_sample,]
++ 	training_set = merge(cases_train, controls_train, all=TRUE)
++ 	testing_set = merge(cases_test, controls_test, all=TRUE)
++ 
++ 	#TRAINING SET: null model
++ 	model_SYSTOLIC_OR_DIASTOLIC_DECREASE_2_0_train <- glm(SYSTOLIC_OR_DIASTOLIC_DECREASE_2~1, training_set , family = binomial)
++ 	#TRAINING SET: formulas for each feature set
++ 	formula <- paste(c("SYSTOLIC_OR_DIASTOLIC_DECREASE_2", s_model_all_features), collapse="~")
++ 	#TRAINING SET: formula for all features
++ 	(f <- as.formula(paste("~", s_model_all_features)))
++ 	#TRAINING SET: stepwise ADD
++ 	model_SYSTOLIC_OR_DIASTOLIC_DECREASE_2_allfeatures_train <- step(model_SYSTOLIC_OR_DIASTOLIC_DECREASE_2_0_train, scope=list(lower=~1, upper=f), direction="forward")  	
++ 
++ 	#TESTING SET - fit the training set model to the TESTING set
++ 	predictions_testing_set <- predict(model_SYSTOLIC_OR_DIASTOLIC_DECREASE_2_allfeatures_train, newdata=testing_set, type="response")
++ 	testing_set$predictions <- predictions_testing_set
++ 	roc_this_fold <- roc(SYSTOLIC_OR_DIASTOLIC_DECREASE_2 ~ predictions, data = testing_set)
++ 	auc_this_fold <- roc_this_fold$auc
++ 	l_auc_all_folds <- append(l_auc_all_folds, auc_this_fold)
++ 
++ 	##list of features used this fold
++ 	l_features_this_fold <- names(coefficients(model_SYSTOLIC_OR_DIASTOLIC_DECREASE_2_allfeatures_train))[-1]
++ 	l_stepwise_features_used <- append(l_stepwise_features_used, l_features_this_fold)
++ }
+[1] "start CV fold 1"
+Start:  AIC=3031.98
+SYSTOLIC_OR_DIASTOLIC_DECREASE_2 ~ 1
+
+
+Execution halted
