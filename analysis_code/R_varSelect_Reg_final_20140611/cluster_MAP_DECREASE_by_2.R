@@ -3,7 +3,7 @@
 
 ##cluster
 library(mclust)
-names_cluster_features <- l_stepwise_features_used_unique
+names_cluster_features <- l_features_for_cluster
 cluster_features <- data_for_model_scaled[, names_cluster_features]
 #model_cluster <- Mclust(cluster_features, G=1:40, modelNames=mclust.options("emModelNames"))
 model_cluster <- Mclust(cluster_features)
