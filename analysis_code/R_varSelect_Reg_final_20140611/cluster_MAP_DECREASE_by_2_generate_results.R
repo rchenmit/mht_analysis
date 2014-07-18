@@ -175,6 +175,14 @@ dm_median_BMI = median(subset(data_merged_with_cluster, DIABETES ==1, select="BM
 chf_median_BMI = median(subset(data_merged_with_cluster, CHF ==1, select="BMI")$BMI)
 
 
+#skew for continuous variables
+
+
+#kurtosis for continuous variables
+
+
+
+
 ## print the medians for each cluster (continuous variables)
 df_clust_continuous_medians = aggregate(subset(data_merged_with_cluster, select=names(data_merged_with_cluster)[19:32] ), by=list(data_merged_with_cluster$cluster_id), FUN=median)# columns 3 to 32 contain the continuous variables
 write.csv(df_clust_continuous_medians, quote=FALSE, row.names=FALSE, file="df_clust_summary_continuous_MEDIAN_20140619.csv")

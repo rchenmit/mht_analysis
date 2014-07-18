@@ -93,8 +93,6 @@ data0_binary = transform(data0_binary,
 		SYSTOLIC_OR_DIASTOLIC_DECREASE_2 = as.factor(SYSTOLIC_OR_DIASTOLIC_DECREASE_2)
 	)
 
-
-
 #transform to numeric
 data0_continuous = transform(data_continuous, 
       	SYSTOLIC_CHANGE=as.numeric(SYSTOLIC_CHANGE), 
@@ -111,7 +109,8 @@ data0_continuous = transform(data_continuous,
 		DIASTOLIC_AFTER = as.numeric(DIASTOLIC_AFTER),
 		MAP_BEFORE = as.numeric(MAP_BEFORE),
 		MAP_AFTER = as.numeric(MAP_AFTER)
-		)  
+		)
+
 ##transform ICD columns to numeric
 #cols = c(2:ncol(data_icd))
 #data_icd[,cols] = apply(data_icd[,cols], 2, function(x) as.numeric(as.character(x)))
@@ -142,7 +141,7 @@ data_for_model_continuous <- as.data.frame(data0_as_datatable)
 
 #scale data; but do NOT scale binary features
 ruid_col = data_for_model_continuous["RUID"]
-data_for_model_scaled <- data.frame(ruid_col,    scale(data_for_model_continuous[, -which(names(data_for_model_continuous) %in% c("RUID"))]))
+data_for_model_scaled <- data.frame(ruid_col, scale(data_for_model_continuous[, -which(names(data_for_model_continuous) %in% c("RUID"))]))
 
 
 ##merge with binary features for BP change; binary features are NOT scaled
