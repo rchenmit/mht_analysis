@@ -99,7 +99,7 @@ quantile(data_merged_with_cluster_MAP$MAP_CHANGE, .95)
 ## calculate how many had change in MAP of at least -2mmHg
 num_MAP_decrease_by_2 = dim(subset(data_merged_with_cluster, MAP_CHANGE<=-2))[1]
 num_MAP_decrease = dim(subset(data_merged_with_cluster, MAP_CHANGE<=0))[1]
-num_MAP_increase_by_2 = dim(subset(data_merged_with_cluster, MAP_CHANGE>=2))[1]
+num_MAP_increase_by_2 = dim(subset(data_merged_with_cluster, MAP_CHANGE>2))[1]
 num_MAP_increase = dim(subset(data_merged_with_cluster, MAP_CHANGE>0))[1]
 
 #> num_MAP_decrease_by_2
