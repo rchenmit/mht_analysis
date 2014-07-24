@@ -88,13 +88,41 @@ table(subset(data_merged_with_cluster_MAP_nodecrease2, select=c("BLACK")))
 table(subset(data_merged_with_cluster_MAP_nodecrease2, select=c("DIABETES")))
 table(subset(data_merged_with_cluster_MAP_nodecrease2, select=c("CHF")))
 
+## print out quantiles for BP changes: //added 7/22/2014
+quantile(data_merged_with_cluster_MAP$SYSTOLIC_CHANGE, .05)
+quantile(data_merged_with_cluster_MAP$SYSTOLIC_CHANGE, .95)
+quantile(data_merged_with_cluster_MAP$DIASTOLIC_CHANGE, .05)
+quantile(data_merged_with_cluster_MAP$DIASTOLIC_CHANGE, .95)
+quantile(data_merged_with_cluster_MAP$MAP_CHANGE, .05)
+quantile(data_merged_with_cluster_MAP$MAP_CHANGE, .95)
 
+## calculate how many had change in MAP of at least -2mmHg
+num_MAP_decrease_by_2 = dim(subset(data_merged_with_cluster, MAP_CHANGE<=-2))[1]
+num_MAP_decrease = dim(subset(data_merged_with_cluster, MAP_CHANGE<=0))[1]
+num_MAP_increase_by_2 = dim(subset(data_merged_with_cluster, MAP_CHANGE>=2))[1]
+num_MAP_increase = dim(subset(data_merged_with_cluster, MAP_CHANGE>0))[1]
 
+#> num_MAP_decrease_by_2
+#[1] 1198
+#> num_MAP_decrease
+#[1] 1481
+#> num_MAP_increase_by_2
+#[1] 789
+#> num_MAP_increase
+#[1] 1040
+### percentage of pts with decrease in MAP
+#> 1481/2521
+#[1] 0.5874653
 
 ##############################################################################
 #make scatterplot of before vs after MAP values
 #
-plot(data_merged_with_cluster$MAP_BEFORE, data_merged_with_cluster$MAP_AFTER, xlab="MAP before MHT program", ylab="MAP after MHT enrollment", xlim=c(65,140), ylim=c(65,140), col="blue")
-lines(c(50,160), c(50,160))
-lines(c(50,160), c(52,162), lty=2)
-lines(c(50,160), c(48,158), lty=2)
+subset_MAP_decrease = subset(data_merged_with_cluster, MAP_CHANGE<=0)
+subset_MAP_increase = subset(data_merged_with_cluster, MAP_CHANGE>0)
+plot(subset_MAP_decrease$MAP_BEFORE, subset_MAP_decrease$MAP_AFTER, xlab="MAP before MHT program", ylab="MAP after MHT enrollment", xlim=c(65,140), ylim=c(65,140), col="green", pch=20, cex=0.9)
+par(new=T) #acts like "hold on" in MATLAB
+plot(subset_MAP_increase$MAP_BEFORE, subset_MAP_increase$MAP_AFTER, xlab="MAP before MHT program", ylab="MAP after MHT enrollment", xlim=c(65,140), ylim=c(65,140), col="red", pch=20, cex=0.9)
+lines(c(50,160), c(50,160)) #to draw the line for increase vs decrease
+#lines(c(50,160), c(52,162), lty=2) #for 2mmHg increase
+#lines(c(50,160), c(48,158), lty=2) #for 2mmHg decrease
+par(new=F)
