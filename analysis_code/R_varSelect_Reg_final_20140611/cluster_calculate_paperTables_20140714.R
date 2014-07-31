@@ -126,3 +126,30 @@ lines(c(50,160), c(50,160)) #to draw the line for increase vs decrease
 #lines(c(50,160), c(52,162), lty=2) #for 2mmHg increase
 #lines(c(50,160), c(48,158), lty=2) #for 2mmHg decrease
 par(new=F)
+
+##############################################################################
+#make scatterplot of before vs after SBP values
+#
+subset_SYSTOLIC_decrease = subset(data_merged_with_cluster, SYSTOLIC_CHANGE<=0)
+subset_SYSTOLIC_increase = subset(data_merged_with_cluster, SYSTOLIC_CHANGE>0)
+plot(subset_SYSTOLIC_decrease$SYSTOLIC_BEFORE, subset_SYSTOLIC_decrease$SYSTOLIC_AFTER, xlab="SBP before MHT program", ylab="SBP after MHT enrollment", xlim=c(65,220), ylim=c(65,220), col="green", pch=20, cex=0.9)
+par(new=T) #acts like "hold on" in MATLAB
+plot(subset_SYSTOLIC_increase$SYSTOLIC_BEFORE, subset_SYSTOLIC_increase$SYSTOLIC_AFTER, xlab="SBP before MHT program", ylab="SBP after MHT enrollment", xlim=c(65,220), ylim=c(65,220), col="red", pch=20, cex=0.9)
+lines(c(50,300), c(50,300)) #to draw the line for increase vs decrease
+#lines(c(50,160), c(52,162), lty=2) #for 2mmHg increase
+#lines(c(50,160), c(48,158), lty=2) #for 2mmHg decrease
+par(new=F)
+
+
+##############################################################################
+#make scatterplot of before vs after DIASTOLIC values
+#
+subset_DIASTOLIC_decrease = subset(data_merged_with_cluster, DIASTOLIC_CHANGE<=0)
+subset_DIASTOLIC_increase = subset(data_merged_with_cluster, DIASTOLIC_CHANGE>0)
+plot(subset_DIASTOLIC_decrease$DIASTOLIC_BEFORE, subset_DIASTOLIC_decrease$DIASTOLIC_AFTER, xlab="DBP before MHT program", ylab="DBP after MHT enrollment", xlim=c(65,140), ylim=c(65,140), col="green", pch=20, cex=0.9)
+par(new=T) #acts like "hold on" in MATLAB
+plot(subset_DIASTOLIC_increase$DIASTOLIC_BEFORE, subset_DIASTOLIC_increase$DIASTOLIC_AFTER, xlab="DBP before MHT program", ylab="DBP after MHT enrollment", xlim=c(65,140), ylim=c(65,140), col="red", pch=20, cex=0.9)
+lines(c(50,160), c(50,160)) #to draw the line for increase vs decrease
+#lines(c(50,160), c(52,162), lty=2) #for 2mmHg increase
+#lines(c(50,160), c(48,158), lty=2) #for 2mmHg decrease
+par(new=F)
